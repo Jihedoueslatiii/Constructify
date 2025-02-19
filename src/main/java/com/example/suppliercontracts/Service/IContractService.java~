@@ -1,0 +1,4 @@
+package com.example.suppliercontracts.Service;
+
+public interface IContractService {
+}
