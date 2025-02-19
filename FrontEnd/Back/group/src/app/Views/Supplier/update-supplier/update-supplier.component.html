@@ -1,0 +1,77 @@
+<div class="container">
+    <h2 class="title">Mettre à jour le fournisseur</h2>
+    
+    <form (ngSubmit)="updateSupplier()">
+      <div class="form-group">
+        <label for="name">Nom :</label>
+        <input type="text" id="name" [(ngModel)]="supplier.name" name="name" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="contactPerson">Personne de contact :</label>
+        <input type="text" id="contactPerson" [(ngModel)]="supplier.contactPerson" name="contactPerson" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email :</label>
+        <input type="email" id="email" [(ngModel)]="supplier.email" name="email" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="phoneNumber">Téléphone :</label>
+        <input type="text" id="phoneNumber" [(ngModel)]="supplier.phoneNumber" name="phoneNumber" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="address">Adresse :</label>
+        <input type="text" id="address" [(ngModel)]="supplier.address" name="address" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="status">Statut :</label>
+        <select id="status" [(ngModel)]="supplier.status" name="status">
+          <option value="active">Actif</option>
+          <option value="inactive">Inactif</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="industry">Industrie :</label>
+        <input type="text" id="industry" [(ngModel)]="supplier.industry" name="industry">
+      </div>
+  
+      <div class="form-group">
+        <label for="rating">Évaluation :</label>
+        <input type="number" id="rating" [(ngModel)]="supplier.rating" name="rating" min="0" max="5">
+      </div>
+  
+      <div class="form-group">
+        <label for="taxId">Identifiant fiscal :</label>
+        <input type="text" id="taxId" [(ngModel)]="supplier.taxId" name="taxId">
+      </div>
+  
+      <div class="form-group">
+        <label for="totalContractValue">Valeur totale du contrat :</label>
+        <input type="number" id="totalContractValue" [(ngModel)]="supplier.totalContractValue" name="totalContractValue">
+      </div>
+  
+      <div class="form-group">
+        <label for="preferredSupplier">Fournisseur préféré :</label>
+        <input type="checkbox" id="preferredSupplier" [(ngModel)]="supplier.preferredSupplier" name="preferredSupplier">
+      </div>
+  
+      <div class="form-group">
+        <label for="reliabilityScore">Score de fiabilité :</label>
+        <input type="number" id="reliabilityScore" [(ngModel)]="supplier.reliabilityScore" name="reliabilityScore" min="0" max="100">
+      </div>
+  
+      <div class="form-group">
+        <label for="blacklisted">Liste noire :</label>
+        <input type="checkbox" id="blacklisted" [(ngModel)]="supplier.blacklisted" name="blacklisted">
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Mettre à jour</button>
+      <button type="button" class="btn btn-secondary" >Annuler</button>
+    </form>
+  </div>
+  

@@ -1,0 +1,38 @@
+<div class="container">
+  <!-- Success Message Panel -->
+  <div *ngIf="successMessage" class="success-panel">
+    {{ successMessage }}
+    <button (click)="clearSuccessMessage()" class="close-btn">×</button>
+  </div>
+
+  <h2 class="title">Suppliers</h2>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="filterSuppliers()"
+      placeholder="Search suppliers..."
+      class="search-input"
+    />
+    <button class="search-button">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+
+  <div class="card-container">
+    <div class="card" *ngFor="let supplier of filteredSuppliers">
+      <h3>{{ supplier.name }}</h3>
+      <p><strong>Contact:</strong> {{ supplier.contactPerson }}</p>
+      <p><strong>Email:</strong> {{ supplier.email }}</p>
+      <p><strong>Phone Number:</strong> {{ supplier.phoneNumber }}</p>
+      <p><strong>Address:</strong> {{ supplier.address }}</p>
+      <p><strong>Status:</strong> <span class="status {{ supplier.status }}">{{ supplier.status }}</span></p>
+      <div class="buttons">
+        <button class="btn edit" [routerLink]="['/update-supplier', supplier.idSupplier]">Modifier</button>
+        <button class="btn delete" (click)="supplier.idSupplier ? deleteSupplier(supplier.idSupplier) : null">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
