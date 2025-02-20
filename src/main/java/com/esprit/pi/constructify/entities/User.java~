@@ -1,0 +1,37 @@
+package com.esprit.pi.constructify.entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
+import jakarta.validation.constraints.*;
+@Entity
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "First name is required")
+    private String firstname;
+
+    @NotBlank(message = "Last name is required")
+    private String lastname;
+
+    @Email(message = "Email must be valid")
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
+            message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.")
+    private String password;
+
+    @Pattern(regexp = "^[0-9]{8}$", message = "Phone number must contain exactly 8 digits")
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+}
