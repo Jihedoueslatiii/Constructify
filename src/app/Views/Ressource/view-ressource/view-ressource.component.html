@@ -1,0 +1,27 @@
+<div class="container">
+    <h2 class="title">Liste des Ressources</h2>
+  
+    <table class="resource-table">
+      <thead>
+        <tr>
+        
+          <th>Nom</th>
+          <th>Nombre</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ressource of listRessource">
+          <td>{{ ressource.nomRessource }}</td>
+          <td>{{ ressource.nombreRessource }}</td>
+          <td>{{ ressource.typesRessource }}</td>
+          <td>
+            <button class="btn edit" [routerLink]="['/UpdateRessource', ressource.idRessource]">Update</button>
+            <button class="btn delete" (click)="deleteRessource(ressource.idRessource)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
