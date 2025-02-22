@@ -46,5 +46,17 @@ public class ProjectController {
         projectService.removeProject(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
+    @PostMapping("/{projectId}/tasks/{taskId}")
+    public ResponseEntity<String> assignTaskToProject(@PathVariable Long projectId, @PathVariable Long taskId) {
+        try {
+            projectService.assignTaskToProject(projectId, taskId);
+            return ResponseEntity.ok("Task successfully assigned to the project.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while assigning the task.");
+        }
+    }
 }
