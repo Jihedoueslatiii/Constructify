@@ -1,0 +1,84 @@
+.container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 22px;
+    color: #84cb82;
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #2A5D89;
+}
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #9b9b9b;
+    border-radius: 9px;
+    font-size: 16px;
+  }
+
+  /* Improved Dropdown Menu */
+select {
+  width: 30%;
+  padding: 10px;
+  border: 1px solid #9b9b9b;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none; /* For Safari */
+  -moz-appearance: none; /* For Firefox */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%232A5D89" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+  
+ /* Improved Button */
+.btn.submit {
+  width: 30%;
+  padding: 12px;
+  background: #84cb82; /* Updated to match the theme */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn.submit:hover {
+  background-color: #4f8d4d; /* Darker shade on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn.submit:active {
+  background-color: #153953; /* Even darker on click */
+  transform: translateY(0); /* Reset lift effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn.submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(42, 93, 137, 0.3); /* Custom focus outline */
+}
