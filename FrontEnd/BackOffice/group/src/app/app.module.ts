@@ -14,6 +14,10 @@ import { ViewContractsComponent } from './Views/Supplier/view-contracts/view-con
 import { FilterStatusPipe } from './Views/model/filter-status.pipe';
 import { ViewReportsComponent } from './Reports/viewreports/viewreports.component';
 import { ReportsService } from './Views/service/reports.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReportPopupComponent } from './report-popup/report-popup.component';
+import { UpdateReportComponent } from './Reports/updatereport/updatereport.component';
 
 
 
@@ -27,7 +31,10 @@ import { ReportsService } from './Views/service/reports.service';
 UpdateSupplierComponent,
 DeleteSupplierComponent,
 ViewContractsComponent,
-ViewReportsComponent
+ViewReportsComponent,
+ReportPopupComponent,
+UpdateReportComponent
+
 
 ],
   imports: [
@@ -36,6 +43,10 @@ ViewReportsComponent
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    BrowserAnimationsModule,
+    MatDialogModule
+    
   ],
   providers: [
     ReportsService

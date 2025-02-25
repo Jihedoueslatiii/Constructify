@@ -7,7 +7,8 @@ export enum ReportType {
   export enum ReportStatus {
     PENDING = 'PENDING',
     COMPLETED = 'COMPLETED',
-    FAILED = 'FAILED'
+    FAILED = 'FAILED',
+    ARCHIVED = 'ARCHIVED'
   }
   
   export interface Report {

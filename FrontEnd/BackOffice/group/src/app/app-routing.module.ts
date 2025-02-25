@@ -13,6 +13,10 @@ const routes: Routes = [
   { path: 'view-contracts', component: ViewContractsComponent },
   { path: 'contract-details/:id', component: ViewContractsComponent },
   { path: 'view-reports', component: ViewReportsComponent },
+  { path: 'archived-reports', component: ViewReportsComponent }, 
+  { path: 'delete-reports', component: ViewReportsComponent }, 
+
+
 ];
 
 
