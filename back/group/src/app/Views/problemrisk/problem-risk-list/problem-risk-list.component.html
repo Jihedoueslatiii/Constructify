@@ -1,0 +1,52 @@
+<div class="container">
+  <h2 class="title">Liste des Problèmes/Risques</h2>
+
+  <!-- Bouton "Ajouter un ProblemRisk" centré -->
+  <div class="add-button">
+    <button routerLink="/add-problem-risk" class="btn add">
+      Ajouter un ProblemRisk
+    </button>
+  </div>
+
+  <!-- Conteneur des cartes -->
+  <div class="card-container">
+    <div class="card" *ngFor="let pr of problemRisks">
+      <!-- Titre seul -->
+      <h3>{{ pr.title }}</h3>
+
+      <!-- Type sur sa propre ligne -->
+      <p><strong>Type :</strong> {{ pr.type }}</p>
+
+      <p><strong>Statut :</strong> {{ pr.problemStatus }}</p>
+      <p><strong>Probabilité :</strong> {{ pr.probability }}</p>
+      <p><strong>Description :</strong> {{ pr.description }}</p>
+
+      <!-- Dates (si non null) -->
+      <p *ngIf="pr.detectionDate">
+        <strong>Date de détection :</strong>
+        <!-- Le pipe 'date' formate le champ en yyyy-MM-dd HH:mm -->
+        {{ pr.detectionDate | date:'yyyy-MM-dd HH:mm' }}
+      </p>
+
+      <p *ngIf="pr.resolutionDate">
+        <strong>Date de résolution :</strong>
+        {{ pr.resolutionDate | date:'yyyy-MM-dd HH:mm' }}
+      </p>
+
+      <div class="buttons">
+        <button
+          class="btn edit"
+          [routerLink]="['/edit-problem-risk', pr.idProblemRisk]"
+        >
+          Modifier
+        </button>
+        <button
+          class="btn delete"
+          (click)="deleteProblemRisk(pr.idProblemRisk)"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

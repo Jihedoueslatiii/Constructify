@@ -11,6 +11,8 @@ import { AddRessourceComponent } from './Views/Ressource/add-ressource/add-resso
 import { AddDeliverableComponent } from './Views/delivrable/add-deliverable/add-deliverable.component';
 import { ViewDeliverableComponent } from './Views/delivrable/view-deliverable/view-deliverable.component';
 import { UpdateDeliverableComponent } from './Views/delivrable/update-deliverable/update-deliverable.component';
+import { ProblemRiskListComponent } from './Views/problemrisk/problem-risk-list/problem-risk-list.component';
+import { ProblemRiskFormComponent } from './Views/problemrisk/problem-risk-form/problem-risk-form.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { UpdateDeliverableComponent } from './Views/delivrable/update-deliverabl
     AddDeliverableComponent,
     ViewDeliverableComponent,
     UpdateDeliverableComponent,
+    ProblemRiskListComponent,
+    ProblemRiskFormComponent,
     
   ],
   imports: [
