@@ -1,6 +1,7 @@
 package com.esprit.constuctify.project_ms;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ public class ProjectService implements IProjectService {
     private ProjectRepository projectRepository;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private EmailService emailService;
     @Override
     public List<Project> retrieveAllProjects() {
         return projectRepository.findAll();
@@ -22,10 +25,19 @@ public class ProjectService implements IProjectService {
 
     @Override
     public Project addProject(Project project) {
+        // Save the project to the database
+        Project savedProject = projectRepository.save(project);
 
+        try {
+            // Send email with project details
+            emailService.sendProjectDetailsEmail(savedProject);
+        } catch (MessagingException e) {
+            // Log the error or handle it gracefully
+            System.err.println("Failed to send email: " + e.getMessage());
+            // Optionally, you can notify the user or take other actions
+        }
 
-
-        return projectRepository.save(project);
+        return savedProject;
     }
 
     @Override
