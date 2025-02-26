@@ -33,6 +33,9 @@ export class SupplierService {
     return this.http.put<Supplier>(`${this.apiUrl}/update/${id}`, supplier);
   }
 
-  
-  
+  getFinancialHealthStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/financial-health`, {
+      responseType: 'json',
+    });
+  }
 }

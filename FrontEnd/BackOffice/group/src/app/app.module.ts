@@ -18,8 +18,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReportPopupComponent } from './report-popup/report-popup.component';
 import { UpdateReportComponent } from './Reports/updatereport/updatereport.component';
-
-
+import { SupplierStatsComponent } from './Views/Supplier/supplier-stats/supplier-stats.component';
+import { NgChartsModule } from 'ng2-charts'; // Import NgChartsModule
 
 @NgModule({
   declarations: [
@@ -28,15 +28,14 @@ import { UpdateReportComponent } from './Reports/updatereport/updatereport.compo
     BarComponent,
     ViewSupplierComponent,
     AddSupplierComponent,
-UpdateSupplierComponent,
-DeleteSupplierComponent,
-ViewContractsComponent,
-ViewReportsComponent,
-ReportPopupComponent,
-UpdateReportComponent
-
-
-],
+    UpdateSupplierComponent,
+    DeleteSupplierComponent,
+    ViewContractsComponent,
+    ViewReportsComponent,
+    ReportPopupComponent,
+    UpdateReportComponent,
+    SupplierStatsComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -44,9 +43,8 @@ UpdateReportComponent
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    BrowserAnimationsModule,
-    MatDialogModule
-    
+    MatDialogModule,
+    NgChartsModule // Add NgChartsModule here
   ],
   providers: [
     ReportsService

@@ -60,31 +60,88 @@
   margin-top: 10px;
 }
 
+/* Uiverse Button Styles */
 .btn {
-  padding: 8px 12px;
-  font-size: 14px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
   border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
   cursor: pointer;
-  border-radius: 9px;
-  transition: 0.3s;
-  color: white;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
 }
 
+.btn .svgIcon {
+  width: 20px; /* Increased icon size */
+  height: 20px; /* Added height for consistency */
+  transition-duration: 0.3s;
+}
+
+.btn .svgIcon path {
+  fill: white;
+}
+
+.btn:hover {
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  align-items: center;
+}
+
+.btn:hover .svgIcon {
+  transform: translateY(-200%);
+}
+
+.btn::before {
+  position: absolute;
+  bottom: -20px;
+  content: "Button";
+  color: white;
+  font-size: 0px;
+  opacity: 0;
+  transition: opacity 0.3s, font-size 0.3s;
+}
+
+.btn:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  bottom: unset;
+}
+
+/* Edit Button (Green) */
 .edit {
-  background: #62d85e;
+  background-color: #62d85e; /* Green background */
 }
 
 .edit:hover {
-  background: #218838;
+  background-color: #218838; /* Darker green on hover */
 }
 
+.edit::before {
+  content: "Edit";
+}
+
+/* Delete Button (Red) */
 .delete {
-  background: #c23e4b;
+  background-color: #c23e4b; /* Red background */
 }
 
 .delete:hover {
-  background: #d80419;
+  background-color: #d80419; /* Darker red on hover */
 }
+
+.delete::before {
+  content: "Delete";
+}
+
+/* Success Panel */
 .success-panel {
   background-color: #4CAF50; /* Green background */
   color: white;
@@ -108,7 +165,6 @@
 .close-btn:hover {
   color: #f0f0f0;
 }
-
 
 .search-bar {
   display: flex;

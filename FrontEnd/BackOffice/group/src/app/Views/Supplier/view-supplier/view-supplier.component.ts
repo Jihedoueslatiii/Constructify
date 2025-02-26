@@ -26,23 +26,23 @@ export class ViewSupplierComponent implements OnInit {
   fetchSuppliers(): void {
     this.supplierService.getSuppliers().subscribe({
       next: (data: Supplier[]) => {
-        console.log('Données reçues:', data);
+        console.log('Data received:', data);
         this.suppliers = data;
         this.filteredSuppliers = data; // Initialize filteredSuppliers with all suppliers
       },
       error: (error) => {
-        console.error('Erreur lors de la récupération des fournisseurs:', error);
+        console.error('Error fetching suppliers:', error);
       }
     });
   }
 
   deleteSupplier(id: number): void {
-    const confirmDelete = confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?');
+    const confirmDelete = confirm('Are you sure you want to delete this supplier?');
     if (confirmDelete) {
       this.supplierService.deleteSupplier(id).subscribe({
         next: () => {
-          console.log('Fournisseur supprimé avec succès');
-          this.successMessage = 'Fournisseur supprimé avec succès !'; // Set success message
+          console.log('Supplier deleted successfully');
+          this.successMessage = 'Supplier deleted successfully!'; // Set success message
 
           // Clear the success message after 5 seconds
           setTimeout(() => {
@@ -52,7 +52,7 @@ export class ViewSupplierComponent implements OnInit {
           this.fetchSuppliers(); // Refresh the supplier list after deletion
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression du fournisseur:', error);
+          console.error('Error deleting supplier:', error);
         }
       });
     }

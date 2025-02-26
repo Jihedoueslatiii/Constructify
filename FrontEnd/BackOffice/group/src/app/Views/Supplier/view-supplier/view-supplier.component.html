@@ -6,12 +6,7 @@
   </div>
 
   <h2 class="title">Supplier Overview</h2>
-  
-  <!-- Top Buttons -->
-  <div class="top-buttons">
-    <button class="btn contract" [routerLink]="['/contracts']">Contract</button>
-  </div>
-  
+
   <!-- Search Bar -->
   <div class="search-bar">
     <input
@@ -35,8 +30,16 @@
       <p><strong>Address:</strong> {{ supplier.address }}</p>
       <p><strong>Status:</strong> <span class="status {{ supplier.status }}">{{ supplier.status }}</span></p>
       <div class="buttons">
-        <button class="btn edit" [routerLink]="['/update-supplier', supplier.idSupplier]">Update</button>
-        <button class="btn delete" (click)="supplier.idSupplier ? deleteSupplier(supplier.idSupplier) : null">Delete</button>
+        <button class="btn edit" [routerLink]="['/update-supplier', supplier.idSupplier]">
+          <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 3L17.5 5.5L8 15H5V12L15 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="btn delete" (click)="supplier.idSupplier ? deleteSupplier(supplier.idSupplier) : null">
+          <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 19L18 5M6 5L18 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>

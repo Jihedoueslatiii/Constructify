@@ -5,6 +5,7 @@ import { AddSupplierComponent } from './Views/Supplier/add-supplier/add-supplier
 import { UpdateSupplierComponent } from './Views/Supplier/update-supplier/update-supplier.component';
 import { ViewContractsComponent } from './Views/Supplier/view-contracts/view-contracts.component';
 import { ViewReportsComponent } from './Reports/viewreports/viewreports.component';
+import { SupplierStatsComponent } from './Views/Supplier/supplier-stats/supplier-stats.component';
 
 const routes: Routes = [
   { path: 'view-supplier', component: ViewSupplierComponent },
@@ -15,8 +16,7 @@ const routes: Routes = [
   { path: 'view-reports', component: ViewReportsComponent },
   { path: 'archived-reports', component: ViewReportsComponent }, 
   { path: 'delete-reports', component: ViewReportsComponent }, 
-
-
+  { path: 'supplier-financial-health', component: SupplierStatsComponent },
 ];
 
 

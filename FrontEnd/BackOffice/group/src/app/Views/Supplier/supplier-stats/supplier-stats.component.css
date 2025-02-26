@@ -1,0 +1,47 @@
+h2 {
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: #000000;
+  margin-top: 15px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background: #f9f9f9;
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Add this CSS to make the chart smaller */
+.chart-container {
+  width: 1000px; /* Adjust the width as needed */
+  height: 500px; /* Adjust the height as needed */
+  margin: 0 auto; /* Center the chart */
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 200% !important;
+}
+
+.chart-title {
+  text-align: center; /* Center the title */
+  font-size: 24px; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  color: #000000; /* Dark color for better readability */
+  margin-bottom: 20px; /* Space between title and chart */
+}
+

@@ -1,0 +1,25 @@
+<div *ngIf="isLoading; else content">
+  <p>Loading supplier stats...</p>
+</div>
+
+<ng-template #content>
+  <div *ngIf="errorMessage; else stats">
+    <p class="error">{{ errorMessage }}</p>
+  </div>
+
+  <ng-template #stats>
+    <div *ngIf="supplierStats">
+      <!-- Chart container with a title on top -->
+      <div class="chart-container">
+        <h2 class="chart-title">Supplier Reliability vs. Contract Value</h2> <!-- Title on top -->
+        <div>
+          <canvas baseChart
+                  [type]="'scatter'"
+                  [data]="chartData"
+                  [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ng-template>

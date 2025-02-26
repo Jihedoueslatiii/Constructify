@@ -22,9 +22,14 @@
       <option value="FAILED">Failed</option>
       <option value="ARCHIVED">Archived</option>
     </select>
-    <!-- Add the Generate Report button here -->
-    <button class="btn generate-performance-btn" (click)="generatePerformanceReport()">Generate Performance Report</button>
-  </div>
+    
+  <!-- Generate Performance Report Button -->
+  <button class="btn generate-performance-btn" (click)="generatePerformanceReport()">
+    <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
 
   <!-- Reports Card Grid -->
   <div class="card-container">
@@ -52,11 +57,24 @@
         </ul>
       </div>
       <div class="card-footer">
+        <!-- Update Button -->
         <button class="btn btn-primary" (click)="onUpdate(report)">
-          <i class="fas fa-refresh"></i> Update
+          <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 3L17.5 5.5L8 15H5V12L15 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
-        <button class="btn btn-archive" (click)="ArchiveReport(report.idReport)">Archive</button>
-        <button class="btn btn-danger" (click)="deleteReport(report.idReport)">Delete</button>
+        <!-- Archive Button -->
+        <button class="btn btn-archive" (click)="ArchiveReport(report.idReport)">
+          <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 8H19M15 12H19M12 16H19M5 20H19C20.1046 20 21 19.1046 21 18V6C21 4.89543 20.1046 4 19 4H5C3.89543 4 3 4.89543 3 6V18C3 19.1046 3.89543 20 5 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <!-- Delete Button -->
+        <button class="btn btn-danger" (click)="deleteReport(report.idReport)">
+          <svg class="svgIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 19L18 5M6 5L18 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>

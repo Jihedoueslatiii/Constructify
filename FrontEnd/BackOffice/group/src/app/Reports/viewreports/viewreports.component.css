@@ -57,64 +57,160 @@
 
 /* Button Styling */
 .btn {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 5px;
-  text-decoration: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
   border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
   cursor: pointer;
-  transition: 0.3s;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
 }
 
-.btn-primary {
-  background: #62d85e;
+.btn .svgIcon {
+  width: 20px; /* Increased icon size */
+  height: 20px; /* Added height for consistency */
+  transition-duration: 0.3s;
+}
+
+.btn .svgIcon path {
+  fill: white;
+}
+
+.btn:hover {
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  background-color: rgb(181, 160, 255);
+  align-items: center;
+}
+
+.btn:hover .svgIcon {
+  transform: translateY(-200%);
+}
+
+.btn::before {
+  position: absolute;
+  bottom: -20px;
+  content: "Button";
   color: white;
+  font-size: 0px;
+  opacity: 0;
+  transition: opacity 0.3s, font-size 0.3s;
+}
+
+.btn:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  bottom: unset;
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: #62d85e; /* Green background */
 }
 
 .btn-primary:hover {
-  background: #218838;
+  background-color: #218838; /* Darker green on hover */
 }
 
-.btn-danger {
-  background: #c23e4b;
-  color: white;
+.btn-primary::before {
+  content: "Update";
 }
 
-.btn-danger:hover {
-  background: #d80419;
-}
-
+/* Archive Button */
 .btn-archive {
-  background: #6c757d; /* Orange color for archive */
-  color: #ffffff; /* White text for better contrast */
+  background-color: #6c757d; /* Gray background */
 }
 
 .btn-archive:hover {
-  background: #3d4247; /* Darker orange on hover */
+  background-color: #3d4247; /* Darker gray on hover */
 }
 
-.btn-download {
-  background: #28a745; /* Green color for download */
-  color: white;
+.btn-archive::before {
+  content: "Archive";
 }
 
-.btn-download:hover {
-  background: #218838; /* Darker green on hover */
+/* Danger Button */
+.btn-danger {
+  background-color: #c23e4b; /* Red background */
 }
 
+.btn-danger:hover {
+  background-color: #d80419; /* Darker red on hover */
+}
+
+.btn-danger::before {
+  content: "Delete";
+}
+
+/* Generate Performance Report Button */
 .generate-performance-btn {
-  background-color: #2A5D89; /* Green background */
+  width: 50px; /* Circular button */
+  height: 50px; /* Circular button */
+  border-radius: 50%; /* Circular button */
+  background-color: #2A5D89; /* Blue background */
   color: white; /* White text */
-  padding: 10px 20px; /* Padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
   font-size: 14px; /* Font size */
   cursor: pointer; /* Pointer cursor on hover */
   transition: background-color 0.3s ease; /* Smooth transition */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.generate-performance-btn {
+  width: 50px; /* Circular button */
+  height: 50px; /* Circular button */
+  border-radius: 50%; /* Circular button */
+  background-color: #2A5D89; /* Blue background */
+  color: white; /* White text */
+  font-size: 14px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: all 0.3s ease; /* Smooth transition */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Required for ::before positioning */
+  overflow: hidden; /* Hide overflow for the sliding effect */
 }
 
 .generate-performance-btn:hover {
-  background-color: #5485af; /* Darker green on hover */
+  width: 220px; /* Expand width to fit the longer text */
+  border-radius: 50px; /* Rounded rectangle on hover */
+  background-color: #5485af; /* Darker blue on hover */
+}
+
+.generate-performance-btn .svgIcon {
+  width: 20px; /* Increased icon size */
+  height: 20px; /* Added height for consistency */
+  transition: transform 0.3s ease; /* Smooth transition for icon */
+}
+
+.generate-performance-btn:hover .svgIcon {
+  transform: translateY(-200%); /* Move icon out of view on hover */
+}
+
+.generate-performance-btn::before {
+  content: "Generate a Performance Report"; /* Text to display on hover */
+  position: absolute;
+  bottom: -20px; /* Start below the button */
+  color: white; /* White text */
+  font-size: 0px; /* Initially hidden */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease, font-size 0.3s ease, bottom 0.3s ease; /* Smooth transition */
+}
+
+.generate-performance-btn:hover::before {
+  font-size: 14px; /* Show text */
+  opacity: 1; /* Show text */
+  bottom: unset; /* Move text to center */
 }
 
 /* Status Badges */
