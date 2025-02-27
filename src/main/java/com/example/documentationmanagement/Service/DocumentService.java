@@ -1,6 +1,7 @@
 package com.example.documentationmanagement.Service;
 
 import com.example.documentationmanagement.Repository.DocumentRepository;
+import com.example.documentationmanagement.Repository.FolderRepository;
 import com.example.documentationmanagement.entities.Document;
 import com.example.documentationmanagement.entities.DocumentStatus;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,14 +16,17 @@ import java.util.List;
 public class DocumentService implements IDocumentService {
     DocumentRepository documentRepository;
 
+
     /**
      * Upload a new document (either an editable text document or a file-based document).
      */
+
     public Document uploadDocument(Document document) {
         document.setVersionNumber(1); // Initial version
         document.setStatus(DocumentStatus.DRAFT);
         return documentRepository.save(document);
     }
+
 
     /**
      * Retrieve a document by its ID.
@@ -43,14 +47,16 @@ public class DocumentService implements IDocumentService {
      * Retrieve all documents in a specific folder.
      */
     public List<Document> getDocumentsByFolder(Long folderId) {
-        return documentRepository.findByFolderIdAndIsDeletedFalse(folderId);
+        System.out.println("DocumentService: getDocumentsByFolder called with folderId: " + folderId);
+        List<Document> documents = documentRepository.findByFolderIdAndIsDeletedFalse(folderId);
+        System.out.println("DocumentService: Documents retrieved. Size: " + documents.size());
+        return documents;
     }
-
     /**
      * Update an existing document (editable content).
      */
     @Transactional
-    public Document updateDocument(Long documentId, String newContent) {
+    public Document updateDocument(Long documentId, String newContent, String newTags, String newDescription) {
         Document document = getDocumentById(documentId);
         if (!document.isEditable()) {
             throw new UnsupportedOperationException("This document is not editable.");
@@ -60,6 +66,8 @@ public class DocumentService implements IDocumentService {
                 (document.getPreviousVersions() == null ? "" : document.getPreviousVersions() + ",") + document.getContent()
         );
         document.setContent(newContent);
+        document.setTags(newTags);
+        document.setDescription(newDescription);  // Update description
         document.setVersionNumber(document.getVersionNumber() + 1);
         return documentRepository.save(document);
     }
@@ -70,7 +78,7 @@ public class DocumentService implements IDocumentService {
     @Transactional
     public void deleteDocument(Long documentId) {
         Document document = getDocumentById(documentId);
-        document.setDeleted(true);
+        document.setDeleted(true); // Mark as deleted
         documentRepository.save(document);
     }
 
@@ -80,7 +88,7 @@ public class DocumentService implements IDocumentService {
     @Transactional
     public void restoreDocument(Long documentId) {
         Document document = getDocumentById(documentId);
-        document.setDeleted(false);
+        document.setDeleted(false); // Restore
         documentRepository.save(document);
     }
 
@@ -104,4 +112,32 @@ public class DocumentService implements IDocumentService {
         document.setVersionNumber(document.getVersionNumber() - 1);
         return documentRepository.save(document);
     }
+
+    /**
+     * Check and enforce document permissions (optional based on user roles).
+     */
+    public boolean checkPermissions(Long documentId, Long userId, String action) {
+        Document document = getDocumentById(documentId);
+
+        // Example: Simulate permissions by document status or action type (e.g., can edit only documents in 'draft' status)
+        if ("edit".equals(action)) {
+            return document.getStatus() == DocumentStatus.DRAFT;
+        }
+
+        if ("delete".equals(action)) {
+            return document.getStatus() == DocumentStatus.DRAFT; // Simulate permission to delete only draft documents
+        }
+
+        return true; // Default to allowing any other action
+    }
+
+
+    public List<Document> getRecentDocuments() {
+        // Call the repository method to get the most recent documents
+        return documentRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+    public Document updateDocument(Document document) {
+        return documentRepository.save(document);
+    }
+
 }

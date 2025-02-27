@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,28 +24,29 @@ public class Document {
     private String title; // Document name
 
     @Enumerated(EnumType.STRING)
-    private DocumentType type; // Enum for "PDF", "DOCX", "TEXT", etc.
+    private DocumentType type; // Enum for "PDF", "DOCX", etc.
 
     @Enumerated(EnumType.STRING)
-    private DocumentStatus status; // Enum for "DRAFT", "APPROVED", "PENDING_APPROVAL"
+    private DocumentStatus status; // Enum for "DRAFT", "APPROVED", etc.
 
-    private String storagePath; // For uploaded files (if applicable)
+    private String storagePath; // Path for uploaded files
 
     @Column(columnDefinition = "TEXT")
     private String content; // Editable content (for text-based documents)
 
-    private boolean isEditable; // True for WYSIWYG editor, false for uploaded docs
+    private boolean isEditable; // Whether the document can be edited
 
-    private Long folderId; // Folder grouping (stored as ID)
+    private Long folderId;
 
-    private Long projectId; // To associate the document with a project
+    private Long projectId;
 
-    private Long authorId; // User who created the document (from User Microservice)
+    private Long authorId;
 
-    private String permissions; // Store as JSON/String: "READ:1,EDIT:2,DOWNLOAD:3"
+    private String permissions; // Store roles and permissions (e.g., "READ:1,EDIT:2")
 
     private int versionNumber = 1; // Version tracking
-    private String previousVersions; // JSON or CSV of old content/paths
+
+    private String previousVersions; // Store previous versions (as CSV/JSON)
 
     private boolean isDeleted = false; // Soft delete flag
 
@@ -53,4 +55,7 @@ public class Document {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    private String tags; // New field to store tags as a comma-separated string
+    private String description; // New field for a brief description of the document
 }

@@ -10,4 +10,6 @@ import java.util.List;
 public interface DocumentRepository extends JpaRepository<Document,Long> {
     List<Document> findByProjectIdAndIsDeletedFalse(Long projectId);
     List<Document> findByFolderIdAndIsDeletedFalse(Long folderId);
+    List<Document> findTop10ByOrderByCreatedAtDesc();
+    List<Document> findByFolderId(int folderId);
 }
