@@ -13,6 +13,7 @@ export interface Supplier {
   preferredSupplier: boolean;
   reliabilityScore: number;
   blacklisted: boolean;
+  underReview: boolean;
   tags: string[];
   dateAdded: string;
   lastUpdated: string;

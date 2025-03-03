@@ -21,6 +21,7 @@
     </button>
   </div>
 
+  <!-- Card View of Suppliers -->
   <div class="card-container">
     <div class="card" *ngFor="let supplier of filteredSuppliers">
       <h3>{{ supplier.name }}</h3>
@@ -40,6 +41,50 @@
             <path d="M6 19L18 5M6 5L18 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kanban Board Section -->
+  <div class="kanban-section">
+    <div class="kanban-board" cdkDropListGroup>
+      <div class="kanban-column" cdkDropList [cdkDropListData]="preferredSuppliers" (cdkDropListDropped)="drop($event, 'Preferred')">
+        <h3>🔵 Preferred Suppliers</h3>
+        <div
+          class="kanban-item"
+          *ngFor="let supplier of preferredSuppliers"
+          cdkDrag
+          (click)="openSupplierDetails(supplier)"
+        >
+          <h4>{{ supplier.name }}</h4>
+          <p><strong>Status:</strong> {{ supplier.status }}</p>
+        </div>
+      </div>
+
+      <div class="kanban-column" cdkDropList [cdkDropListData]="underReviewSuppliers" (cdkDropListDropped)="drop($event, 'Under Review')">
+        <h3>🟠 Under Review</h3>
+        <div
+          class="kanban-item"
+          *ngFor="let supplier of underReviewSuppliers"
+          cdkDrag
+          (click)="openSupplierDetails(supplier)"
+        >
+          <h4>{{ supplier.name }}</h4>
+          <p><strong>Status:</strong> {{ supplier.status }}</p>
+        </div>
+      </div>
+
+      <div class="kanban-column" cdkDropList [cdkDropListData]="blacklistedSuppliers" (cdkDropListDropped)="drop($event, 'Blacklisted')">
+        <h3>🔴 Blacklisted</h3>
+        <div
+          class="kanban-item"
+          *ngFor="let supplier of blacklistedSuppliers"
+          cdkDrag
+          (click)="openSupplierDetails(supplier)"
+        >
+          <h4>{{ supplier.name }}</h4>
+          <p><strong>Status:</strong> {{ supplier.status }}</p>
+        </div>
       </div>
     </div>
   </div>

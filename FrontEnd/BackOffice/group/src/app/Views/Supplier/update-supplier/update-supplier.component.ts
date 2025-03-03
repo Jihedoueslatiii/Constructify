@@ -9,7 +9,10 @@ import { SupplierService } from '../../service/supplier.service';
   styleUrls: ['./update-supplier.component.css']
 })
 export class UpdateSupplierComponent implements OnInit {
-  supplier: Supplier = { idSupplier: 0, name: '', contactPerson: '', email: '', phoneNumber: '', address: '', status: '', industry: '', rating: 0, taxId: '', totalContractValue: 0, preferredSupplier: false, reliabilityScore: 0, blacklisted: false, tags: [], dateAdded: '', lastUpdated: '' };
+  supplier: Supplier = {
+    idSupplier: 0, name: '', contactPerson: '', email: '', phoneNumber: '', address: '', status: '', industry: '', rating: 0, taxId: '', totalContractValue: 0, preferredSupplier: false, reliabilityScore: 0, blacklisted: false, tags: [], dateAdded: '', lastUpdated: '',
+    underReview: false
+  };
 
   constructor(
     private route: ActivatedRoute,
