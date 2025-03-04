@@ -1,47 +1,167 @@
+/* Leaderboard Styles */
+.leaderboard {
+  max-width: 400px; /* Reduced width */
+  width: 100%;
+  border-radius: 10px; /* Smaller border radius */
+  box-shadow: 0 0 30px -10px rgba(0, 0, 0, 0.4); /* Smaller shadow */
+  margin: 15px auto; /* Reduced margin */
+}
+
+.leaderboard header {
+  --start: 15%;
+  height: 100px; /* Reduced height */
+  background-image: repeating-radial-gradient(circle at var(--start), transparent 0%, transparent 10%, rgba(54, 89, 219, 0.33) 10%, rgba(54, 89, 219, 0.33) 17%), linear-gradient(to right, #5b7cfa, #3659db);
+  color: #fff;
+  position: relative;
+  border-radius: 10px 10px 0 0; /* Smaller border radius */
+  overflow: hidden;
+}
+
+.leaderboard__title {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: calc(var(--start) * 0.75);
+  transform: translateY(-50%);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.leaderboard__title--top {
+  font-size: 20px; /* Smaller font size */
+  font-weight: 700;
+  letter-spacing: 5px; /* Reduced letter spacing */
+}
+
+.leaderboard__title--bottom {
+  font-size: 11px; /* Smaller font size */
+  font-weight: 500;
+  letter-spacing: 2.5px; /* Reduced letter spacing */
+  opacity: 0.65;
+  transform: translateY(-2px);
+}
+
+.leaderboard__icon {
+  fill: #fff;
+  opacity: 0.35;
+  width: 40px; /* Smaller icon */
+  position: absolute;
+  top: 50%;
+  left: var(--start);
+  transform: translate(-50%, -50%);
+}
+
+.leaderboard__profiles {
+  background-color: #fff;
+  border-radius: 0 0 10px 10px; /* Smaller border radius */
+  padding: 10px 10px 15px; /* Reduced padding */
+  display: grid;
+  row-gap: 6px; /* Reduced gap */
+}
+
+.leaderboard__profile {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  padding: 8px 20px 8px 8px; /* Reduced padding */
+  overflow: hidden;
+  border-radius: 8px; /* Smaller border radius */
+  box-shadow: 0 4px 6px -1px rgba(51, 51, 51, 0.23); /* Smaller shadow */
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98), box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
+  background-color: #fff;
+}
+
+.leaderboard__profile:hover {
+  transform: scale(1.03); /* Smaller scale */
+  box-shadow: 0 6px 30px 8px rgba(51, 51, 51, 0.18); /* Smaller shadow */
+}
+
+.leaderboard__picture {
+  max-width: 100%;
+  width: 50px; /* Smaller image */
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px #ebeef3, 0 0 0 18px #f3f4f6; /* Smaller shadow */
+}
+
+.leaderboard__name {
+  color: #979cb0;
+  font-weight: 600;
+  font-size: 16px; /* Smaller font size */
+  letter-spacing: 0.5px; /* Reduced letter spacing */
+  margin-left: 10px; /* Reduced margin */
+}
+
+.leaderboard__value {
+  color: #35d8ac;
+  font-weight: 700;
+  font-size: 28px; /* Smaller font size */
+  text-align: right;
+}
+
+.leaderboard__value > span {
+  opacity: 0.8;
+  font-weight: 600;
+  font-size: 11px; /* Smaller font size */
+  margin-left: 2px; /* Reduced margin */
+}
+
+/* General Styling */
 h2 {
   color: #000000;
-  margin-bottom: 20px;
-}
-
-h3 {
-  color: #000000;
-  margin-top: 15px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background: #f9f9f9;
-  margin: 5px 0;
-  padding: 10px;
-  border: 1px solid #ddd;
+  margin-bottom: 15px; /* Reduced margin */
+  font-size: 20px; /* Smaller font size */
 }
 
 .error {
   color: red;
   font-weight: bold;
+  font-size: 14px; /* Smaller font size */
 }
 
-/* Add this CSS to make the chart smaller */
+/* Dashboard Layout */
+.dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px; /* Reduced gap */
+  padding: 15px; /* Reduced padding */
+}
+
+/* Chart Section */
+.chart-section {
+  flex: 1;
+  min-width: 40%; /* Smaller width */
+  background: #f9f9f9;
+  padding: 15px; /* Reduced padding */
+  border-radius: 8px; /* Smaller border radius */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Smaller shadow */
+  text-align: center;
+}
+
+/* Chart Container */
 .chart-container {
-  width: 1000px; /* Adjust the width as needed */
-  height: 500px; /* Adjust the height as needed */
-  margin: 0 auto; /* Center the chart */
+  width: 100%;
+  height: 300px; /* Smaller height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .chart-container canvas {
-  width: 100% !important;
-  height: 200% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
+/* Chart Title Styling */
 .chart-title {
-  text-align: center; /* Center the title */
-  font-size: 24px; /* Larger font size */
-  font-weight: bold; /* Bold text */
-  color: #000000; /* Dark color for better readability */
-  margin-bottom: 20px; /* Space between title and chart */
+  font-size: 18px; /* Smaller font size */
+  font-weight: bold;
+  color: hsl(208, 53%, 35%);
+  margin: bottom 100px; /* Reduced margin */
+  text-align: center;
+  padding: 20px 0; /* Reduced padding */
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
 }
-

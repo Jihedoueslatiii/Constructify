@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f4f4;
+  box-sizing: border-box; /* Ensure padding/margin are included in element's width/height */
 }
 
 /* Navbar */
@@ -131,6 +132,7 @@ body {
   padding-top: 20px;
   transition: all 0.3s ease-in-out;
   overflow: hidden; /* Hide overflow content */
+  z-index: 999; /* Ensure sidebar is above other content */
 }
 
 /* Closed sidebar */
@@ -205,4 +207,13 @@ body {
 /* Main content */
 main {
   padding-top: 60px; /* Adjust this value to match the height of your navbar */
+  margin-left: 250px; /* Adjust for the sidebar width */
+  transition: margin-left 0.3s ease-in-out;
+  position: relative; /* Ensure main content is positioned correctly */
+  z-index: 1; /* Ensure main content is below the sidebar */
+}
+
+/* When sidebar is closed */
+.sidebar.closed + main {
+  margin-left: 0; /* Allow full width when sidebar is closed */
 }
