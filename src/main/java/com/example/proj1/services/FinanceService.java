@@ -19,7 +19,8 @@ public class FinanceService implements IFinanceService {
   //  @Autowired
     private FinanceRepository financeRepository;
     private final ProjectClient projectClient; // Feign Client pour vérifier le projet
-
+    private final EquipeClient equipeClient;
+    private final RessourceClient ressourceClient;
 
 
     @Override
@@ -107,18 +108,68 @@ public class FinanceService implements IFinanceService {
 
     @Transactional
     public void updateProjectCost(int projectId) {
-        // 🔹 Appelle PROJET pour obtenir le coût total
-        Map<String, Double> costs = projectClient.getProjectCosts(projectId);
-        double totalCost = costs.get("totalCost");
+        // Récupération des coûts des équipes
+        List<Map<String, Object>> equipes = equipeClient.getEquipesByProject(projectId);
+        double totalEquipeCost = equipes.stream()
+                .mapToDouble(equipe -> ((Number) equipe.get("cost")).doubleValue())
+                .sum();
 
-        // 🔹 Met à jour la table Finance
+        // Récupération des coûts des ressources
+        List<Map<String, Object>> ressources = ressourceClient.getRessourcesByProject(projectId);
+        System.out.println("🔍 Réponse API Ressource : " + ressources); // Debug pour voir le format exact
+
+// Assure-toi que la structure de la réponse correspond bien
+        if (ressources == null || ressources.isEmpty()) {
+            System.out.println("⚠️ Aucune ressource trouvée pour ce projet !");
+        } else {
+            for (Map<String, Object> ressource : ressources) {
+                System.out.println("✅ Ressource : " + ressource);
+            }
+        }
+
+        // Calcul du coût total en fonction du nombre de ressources affectées
+        double totalRessourceCost = ressources.stream()
+                .mapToDouble(ressource -> {
+                    // Vérification des données reçues
+                    System.out.println("📌 Ressource JSON : " + ressource);
+
+                    // Extraction des valeurs
+                    Map<String, Integer> idProjets = (Map<String, Integer>) ressource.get("idProjets");
+                    int cost = ((Number) ressource.get("cost")).intValue();
+
+                    // Nombre de ressources affectées au projet
+                    int nombreAffecte = idProjets.getOrDefault(String.valueOf(projectId), 0);
+
+                    System.out.println("💰 Calcul : " + nombreAffecte + " * " + cost);
+
+                    return nombreAffecte * cost;
+                })
+                .sum();
+
+        System.out.println("✅ Coût total des ressources pour le projet " + projectId + " : " + totalRessourceCost);
+
+
+
+        // Calcul du coût total
+        double totalCost = totalEquipeCost + totalRessourceCost;
+
+        // Mise à jour ou création d’une entrée Finance
         Finance finance = financeRepository.findByProjectId(projectId)
                 .orElse(new Finance());
+
         finance.setProjectId(projectId);
         finance.setCost(totalCost);
-        financeRepository.save(finance);
 
+        financeRepository.save(finance);
         System.out.println("✅ Coût du projet mis à jour : " + totalCost);
+    }
+   // calculer le cost de tous les projet
+   @Override
+    public void updateAllProjectCosts() {
+        List<Integer> projectIds = projectClient.getAllProjectIds();
+        for (Integer projectId : projectIds) {
+            updateProjectCost(projectId);
+        }
     }
 
 }

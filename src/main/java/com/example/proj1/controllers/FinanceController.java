@@ -73,10 +73,16 @@ public ResponseEntity<Finance> assignFinanceToProject(@PathVariable int financeI
     return ResponseEntity.ok(finance);
 }
 
-    @Operation(summary = "calcul de cost")
-    @PutMapping("/update-cost/{projectId}")
-    public ResponseEntity<String> updateProjectCost(@PathVariable int projectId) {
-        financeService.updateProjectCost(projectId);
-        return ResponseEntity.ok("✅ Coût du projet " + projectId + " mis à jour !");
-    }
+@Operation(summary = "calcul de cost")
+@PutMapping("/update-cost/{projectId}")
+public void updateProjectCost(@PathVariable("projectId") int projectId) {
+    financeService.updateProjectCost(projectId);
+}
+
+//
+@Operation(summary = "Calcul du coût de tous les projets")
+@PutMapping("/update-cost/all")
+public void updateAllProjectCosts() {
+    financeService.updateAllProjectCosts();
+}
 }

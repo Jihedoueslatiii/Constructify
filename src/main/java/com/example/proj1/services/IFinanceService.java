@@ -13,5 +13,6 @@ public interface IFinanceService {
     double calculateAndUpdateTotalROI(); // Nouvelle méthode
 //
      Finance assignFinanceToProject(int financeId, int projectId);
-    void updateProjectCost(int projectId);
+       void updateProjectCost(int projectId);
+    void updateAllProjectCosts();
 }
