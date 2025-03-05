@@ -1,7 +1,7 @@
-E:\projet Pi\proj1\src\main\java\com\example\proj1\services\FinanceService.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\controllers\FinanceController.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\services\IFinanceService.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\services\ProjectClient.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\repositories\FinanceRepository.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\entities\Finance.java
-E:\projet Pi\proj1\src\main\java\com\example\proj1\Proj1Application.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\entities\Ressource.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\repositories\RessourceRepository.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\services\IRessourceService.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\RessourcesApplication.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\controllers\RessourceController.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\services\ProjectClient.java
+E:\projet Pi\Ressources\src\main\java\ressources\com\ressources\services\RessourceService.java
