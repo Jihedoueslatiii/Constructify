@@ -1,0 +1,7 @@
+com\example\proj1\controllers\FinanceController.class
+com\example\proj1\services\FinanceService.class
+com\example\proj1\repositories\FinanceRepository.class
+com\example\proj1\Proj1Application.class
+com\example\proj1\services\IFinanceService.class
+com\example\proj1\entities\Finance.class
+com\example\proj1\services\ProjectClient.class
