@@ -15,6 +15,23 @@
       <button><i class="fas fa-search"></i></button>
     </div>
 
+    <!-- Bouton de notification -->
+    <div class="notification-wrapper">
+      <button class="notification-btn" (click)="toggleNotifications()">
+        <i class="fas fa-bell"></i>
+        <span *ngIf="notificationCount > 0" class="notification-badge">{{ notificationCount }}</span>
+      </button>
+
+      <!-- Conteneur de notifications -->
+      <div class="notification-dropdown" *ngIf="showNotifications">
+        <div class="notification-item" *ngFor="let notification of notifications">
+          <p>{{ notification }}</p>
+          <button class="close-btn" (click)="removeNotification(notification)">×</button>
+        </div>
+        <button class="clear-all-btn" (click)="clearNotifications()">Clear All</button>
+      </div>
+    </div>
+
     <!-- Icônes -->
     <div class="nav-icons">
       <a href="#" class="icon" title="Messages">

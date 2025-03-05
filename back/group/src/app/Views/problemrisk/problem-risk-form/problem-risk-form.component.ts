@@ -17,6 +17,7 @@ export class ProblemRiskFormComponent implements OnInit {
     probability: 'LOW',
     problemStatus: 'OPEN',
     detectionDate: new Date() // Par défaut, "maintenant"
+    
   };
 
   isEditMode = false;

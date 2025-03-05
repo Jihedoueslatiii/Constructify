@@ -1,0 +1,7 @@
+<div class="notification-bar" *ngIf="notifications.length > 0">
+  <div class="notification-item" *ngFor="let notification of notifications">
+    <p>{{ notification }}</p>
+    <button class="close-btn" (click)="removeNotification(notification)">×</button>
+  </div>
+  <button class="clear-all-btn" (click)="clearNotifications()">Clear All</button>
+</div>

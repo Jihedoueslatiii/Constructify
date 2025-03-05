@@ -1,52 +1,102 @@
 <div class="container">
   <h2 class="title">Liste des Problèmes/Risques</h2>
 
-  <!-- Bouton "Ajouter un ProblemRisk" centré -->
-  <div class="add-button">
-    <button routerLink="/add-problem-risk" class="btn add">
-      Ajouter un ProblemRisk
-    </button>
-  </div>
+  <app-bar (searchEvent)="onSearchChange($event)"></app-bar>
 
-  <!-- Conteneur des cartes -->
-  <div class="card-container">
-    <div class="card" *ngFor="let pr of problemRisks">
-      <!-- Titre seul -->
-      <h3>{{ pr.title }}</h3>
-
-      <!-- Type sur sa propre ligne -->
-      <p><strong>Type :</strong> {{ pr.type }}</p>
-
-      <p><strong>Statut :</strong> {{ pr.problemStatus }}</p>
-      <p><strong>Probabilité :</strong> {{ pr.probability }}</p>
-      <p><strong>Description :</strong> {{ pr.description }}</p>
-
-      <!-- Dates (si non null) -->
-      <p *ngIf="pr.detectionDate">
-        <strong>Date de détection :</strong>
-        <!-- Le pipe 'date' formate le champ en yyyy-MM-dd HH:mm -->
-        {{ pr.detectionDate | date:'yyyy-MM-dd HH:mm' }}
-      </p>
-
-      <p *ngIf="pr.resolutionDate">
-        <strong>Date de résolution :</strong>
-        {{ pr.resolutionDate | date:'yyyy-MM-dd HH:mm' }}
-      </p>
-
-      <div class="buttons">
-        <button
-          class="btn edit"
-          [routerLink]="['/edit-problem-risk', pr.idProblemRisk]"
-        >
-          Modifier
-        </button>
-        <button
-          class="btn delete"
-          (click)="deleteProblemRisk(pr.idProblemRisk)"
-        >
-          Supprimer
-        </button>
+  <!-- Actions principales -->
+  <div class="actions">
+    <div class="top-buttons">
+      <div class="export-buttons">
+        <button class="btn export-pdf" style="background-color: #d9534f; color: white; padding: 6px 12px; font-size: 14px;" (click)="exportPdf()">Exporter en PDF</button>
+        <button class="btn export-excel" style="background-color: #5cb85c; color: white; padding: 6px 12px; font-size: 14px;" (click)="exportExcel()">Exporter en Excel</button>
+      </div>
+      <div class="main-actions">
+        <button routerLink="/add-problem-risk" class="btn add center-button">Ajouter un ProblemRisk</button>
+        <button class="btn stats" (click)="loadStatistics()">Afficher les Statistiques</button>
       </div>
     </div>
   </div>
+
+  <!-- Liste des problèmes/risques -->
+  <div class="card-container">
+    <div class="card" *ngFor="let pr of filteredProblemRisks | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
+      <h3>{{ pr.title }}</h3>
+      <p><strong>Type :</strong> {{ pr.type }}</p>
+      <p><strong>Statut :</strong> {{ pr.problemStatus }}</p>
+      <p><strong>Description :</strong> {{ pr.description }}</p>
+      <p><strong>Date de Détection :</strong> {{ pr.detectionDate ? (pr.detectionDate | date:'shortDate') : "Non disponible" }}</p>
+      <p><strong>Date de Résolution :</strong> {{ pr.resolutionDate ? (pr.resolutionDate | date:'shortDate') : "Non résolu" }}</p>
+      <div class="buttons">
+        <button class="btn edit" [routerLink]="['/edit-problem-risk', pr.idProblemRisk]">Modifier</button>
+        <button class="btn delete" (click)="deleteProblemRisk(pr.idProblemRisk)">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+
+  <!-- Modal des statistiques -->
+  <div class="modal" *ngIf="showStats">
+    <div class="modal-content">
+      <h3>Statistiques</h3>
+
+      <div *ngIf="statsByType.length > 0; else noDataType">
+        <ngx-charts-bar-vertical
+          [results]="statsByType"
+          [view]="[400, 300]"
+          [scheme]="'vivid'"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [showDataLabel]="true">
+        </ngx-charts-bar-vertical>
+      </div>
+      <ng-template #noDataType>
+        <p>Aucune donnée disponible pour les types.</p>
+      </ng-template>
+
+      <div *ngIf="statsByStatus.length > 0; else noDataStatus">
+        <ngx-charts-bar-vertical
+          [results]="statsByStatus"
+          [view]="[400, 300]"
+          [scheme]="'cool'"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [showDataLabel]="true">
+        </ngx-charts-bar-vertical>
+      </div>
+      <ng-template #noDataStatus>
+        <p>Aucune donnée disponible pour les statuts.</p>
+      </ng-template>
+      <button class="btn close" (click)="showStats = false">Fermer</button>
+    </div>
+  </div>
 </div>
+
+<style>
+  .top-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .export-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .main-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .center-button {
+    margin: 0 auto;
+    display: block;
+  }
+</style>
