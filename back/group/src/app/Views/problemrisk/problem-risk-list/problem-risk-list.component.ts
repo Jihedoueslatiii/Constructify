@@ -6,7 +6,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { NotificationService } from 'src/app/Views/service/notification.service'; // Importez le service de notification
+import { NotificationService } from 'src/app/Views/service/notification.service';
 
 @Component({
   selector: 'app-problem-risk-list',
@@ -14,7 +14,6 @@ import { NotificationService } from 'src/app/Views/service/notification.service'
   styleUrls: ['./problem-risk-list.component.css']
 })
 export class ProblemRiskListComponent implements OnInit {
-
   listProblemRisk: ProblemRisk[] = [];
   filteredProblemRisks: ProblemRisk[] = [];
   searchTerm: string = '';
@@ -31,24 +30,47 @@ export class ProblemRiskListComponent implements OnInit {
   selectedType: string = '';
   selectedStatus: string = '';
 
+  
   constructor(
     private problemRiskService: ProblemRiskService,
-    private notificationService: NotificationService // Injectez le service de notification
-  ) { }
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.problemRiskService.getAllProblemRisks().subscribe({
       next: (data) => {
         this.listProblemRisk = data;
         this.filterProblemRisks();
+        this.checkDetectionDates(); // Vérifier les dates de détection
       },
       error: (err) => {
         console.error('Erreur lors du chargement des ProblemRisk :', err);
-        this.notificationService.addNotification('Erreur lors du chargement des problèmes/risques.'); // Notification d'erreur
+        this.notificationService.addNotification('Erreur lors du chargement des problèmes/risques.');
+      }
+    });
+
+   
+  }
+
+  // Vérifier les dates de détection
+  checkDetectionDates(): void {
+    const now = new Date();
+    this.listProblemRisk.forEach(pr => {
+      if (pr.detectionDate) {
+        const detectionDate = new Date(pr.detectionDate);
+        const timeDiff = detectionDate.getTime() - now.getTime();
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        if (daysDiff <= 3 && daysDiff >= 0) {
+          this.notificationService.addNotification(`La date de détection pour "${pr.title}" est proche (${daysDiff} jours restants).`);
+        } else if (daysDiff < 0) {
+          this.notificationService.addNotification(`La date de détection pour "${pr.title}" est dépassée.`);
+        }
       }
     });
   }
 
+  
   deleteProblemRisk(id?: number): void {
     if (!id) return;
     if (confirm('Voulez-vous supprimer ce ProblemRisk ?')) {
@@ -124,7 +146,7 @@ export class ProblemRiskListComponent implements OnInit {
 
     const doc = new jsPDF();
     const img = new Image();
-    img.src = 'assets/image/logo.png';
+    img.src = 'assets/image/logoo.png';
     img.onload = () => {
       doc.addImage(img, 'PNG', 10, 10, 30, 30);
       doc.setFontSize(18);
@@ -182,4 +204,4 @@ export class ProblemRiskListComponent implements OnInit {
     saveAs(data, 'problems_risks.xlsx');
     this.notificationService.addNotification('Export Excel réussi.'); // Notification de succès
   }
-}
+} 

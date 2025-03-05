@@ -7,11 +7,13 @@
   <div class="actions">
     <div class="top-buttons">
       <div class="export-buttons">
-        <button class="btn export-pdf" style="background-color: #d9534f; color: white; padding: 6px 12px; font-size: 14px;" (click)="exportPdf()">Exporter en PDF</button>
-        <button class="btn export-excel" style="background-color: #5cb85c; color: white; padding: 6px 12px; font-size: 14px;" (click)="exportExcel()">Exporter en Excel</button>
+        <button class="btn export-pdf" (click)="exportPdf()">Exporter en PDF</button>
+        <button class="btn export-excel" (click)="exportExcel()">Exporter en Excel</button>
       </div>
       <div class="main-actions">
         <button routerLink="/add-problem-risk" class="btn add center-button">Ajouter un ProblemRisk</button>
+      </div>
+      <div class="stats-button">
         <button class="btn stats" (click)="loadStatistics()">Afficher les Statistiques</button>
       </div>
     </div>
@@ -32,6 +34,7 @@
       </div>
     </div>
   </div>
+ 
 
   <!-- Pagination -->
   <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
@@ -39,6 +42,7 @@
   <!-- Modal des statistiques -->
   <div class="modal" *ngIf="showStats">
     <div class="modal-content">
+      <span class="close" (click)="showStats = false">&times;</span>
       <h3>Statistiques</h3>
 
       <div *ngIf="statsByType.length > 0; else noDataType">
@@ -70,33 +74,6 @@
       <ng-template #noDataStatus>
         <p>Aucune donnée disponible pour les statuts.</p>
       </ng-template>
-      <button class="btn close" (click)="showStats = false">Fermer</button>
     </div>
   </div>
-</div>
-
-<style>
-  .top-buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-
-  .export-buttons {
-    display: flex;
-    gap: 10px;
-  }
-
-  .main-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .center-button {
-    margin: 0 auto;
-    display: block;
-  }
-</style>
+</div> 

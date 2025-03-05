@@ -1,19 +1,22 @@
 <div class="container">
-  <!-- Titre dynamique : mode édition ou ajout -->
   <h2 class="title">
     {{ isEditMode ? 'Modifier un ProblemRisk' : 'Ajouter un ProblemRisk' }}
   </h2>
 
-  <form>
+  <form [formGroup]="problemRiskForm">
     <!-- Champ Titre -->
     <div class="form-group">
       <label for="title">Titre</label>
       <input
         id="title"
-        name="title"
-        [(ngModel)]="problemRisk.title"
+        formControlName="title"
         required
       />
+      <div *ngIf="problemRiskForm.get('title')?.invalid && problemRiskForm.get('title')?.touched" class="text-danger">
+        <div *ngIf="problemRiskForm.get('title')?.errors?.['required']">Le titre est obligatoire.</div>
+        <div *ngIf="problemRiskForm.get('title')?.errors?.['minlength']">Le titre doit contenir au moins 5 caractères.</div>
+        <div *ngIf="problemRiskForm.get('title')?.errors?.['maxlength']">Le titre ne doit pas dépasser 100 caractères.</div>
+      </div>
     </div>
 
     <!-- Champ Description -->
@@ -21,18 +24,20 @@
       <label for="description">Description</label>
       <textarea
         id="description"
-        name="description"
-        [(ngModel)]="problemRisk.description"
+        formControlName="description"
         rows="3"
       ></textarea>
+      <div *ngIf="problemRiskForm.get('description')?.invalid && problemRiskForm.get('description')?.touched" class="text-danger">
+        <div *ngIf="problemRiskForm.get('description')?.errors?.['required']">La description est obligatoire.</div>
+        <div *ngIf="problemRiskForm.get('description')?.errors?.['minlength']">La description doit contenir au moins 10 caractères.</div>
+        <div *ngIf="problemRiskForm.get('description')?.errors?.['maxlength']">La description ne doit pas dépasser 500 caractères.</div>
+      </div>
     </div>
-    
-    
 
     <!-- Champ Type (enum) -->
     <div class="form-group">
       <label for="type">Type</label>
-      <select id="type" name="type" [(ngModel)]="problemRisk.type">
+      <select id="type" formControlName="type">
         <option value="TECHNICAL">TECHNICAL</option>
         <option value="MANAGEMENT">MANAGEMENT</option>
         <option value="OTHER">OTHER</option>
@@ -42,11 +47,7 @@
     <!-- Champ Probabilité (enum) -->
     <div class="form-group">
       <label for="probability">Probabilité</label>
-      <select
-        id="probability"
-        name="probability"
-        [(ngModel)]="problemRisk.probability"
-      >
+      <select id="probability" formControlName="probability">
         <option value="LOW">LOW</option>
         <option value="MEDIUM">MEDIUM</option>
         <option value="HIGH">HIGH</option>
@@ -56,11 +57,7 @@
     <!-- Champ Statut (enum) -->
     <div class="form-group">
       <label for="problemStatus">Statut</label>
-      <select
-        id="problemStatus"
-        name="problemStatus"
-        [(ngModel)]="problemRisk.problemStatus"
-      >
+      <select id="problemStatus" formControlName="problemStatus">
         <option value="OPEN">OPEN</option>
         <option value="IN_PROGRESS">IN_PROGRESS</option>
         <option value="RESOLVED">RESOLVED</option>
@@ -72,10 +69,12 @@
       <label for="detectionDate">Date de détection</label>
       <input
         id="detectionDate"
-        name="detectionDate"
-        [(ngModel)]="problemRisk.detectionDate"
+        formControlName="detectionDate"
         type="datetime-local"
       />
+      <div *ngIf="problemRiskForm.get('detectionDate')?.invalid && problemRiskForm.get('detectionDate')?.touched" class="text-danger">
+        <div *ngIf="problemRiskForm.get('detectionDate')?.errors?.['required']">La date de détection est obligatoire.</div>
+      </div>
     </div>
 
     <!-- Date de résolution -->
@@ -83,10 +82,12 @@
       <label for="resolutionDate">Date de résolution</label>
       <input
         id="resolutionDate"
-        name="resolutionDate"
-        [(ngModel)]="problemRisk.resolutionDate"
+        formControlName="resolutionDate"
         type="datetime-local"
       />
+      <div *ngIf="problemRiskForm.hasError('dateOrder') && problemRiskForm.get('resolutionDate')?.touched" class="text-danger">
+        La date de résolution doit être postérieure à la date de détection.
+      </div>
     </div>
 
     <!-- Solutions appliquées -->
@@ -94,24 +95,21 @@
       <label for="appliedSolutions">Solutions appliquées</label>
       <textarea
         id="appliedSolutions"
-        name="appliedSolutions"
-        [(ngModel)]="problemRisk.appliedSolutions"
+        formControlName="appliedSolutions"
         rows="2"
       ></textarea>
     </div>
 
     <!-- Boutons d'action -->
-    <button
-      type="button"
-      class="btn generate"
-      (click)="generateData()"
-    >
-      Générer
+    <button type="button" class="btn generate" (click)="generateData()">
+      Générer 
     </button>
+    
     <button
       type="button"
       class="btn submit"
       (click)="save()"
+      [disabled]="problemRiskForm.invalid"
     >
       {{ isEditMode ? 'Mettre à jour' : 'Ajouter' }}
     </button>

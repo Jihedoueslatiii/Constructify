@@ -18,7 +18,7 @@ import { ProblemRiskFormComponent } from './Views/problemrisk/problem-risk-form/
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NotificationComponent } from './Views/notification/notification.component';
+import { NotificationComponent } from './Views/notification/notification.component.spec';
 
 
 

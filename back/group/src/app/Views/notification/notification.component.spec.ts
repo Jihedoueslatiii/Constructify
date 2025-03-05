@@ -1,21 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, OnInit } from '@angular/core';
+import { NotificationService } from '../service/notification.service';
 
-import { NotificationComponent } from './notification.component';
+@Component({
+  selector: 'app-notification',
+  templateUrl: './notification.component.html',
+  styleUrls: ['./notification.component.css']
+})
+export class NotificationComponent implements OnInit {
+  notifications: string[] = [];
 
-describe('NotificationComponent', () => {
-  let component: NotificationComponent;
-  let fixture: ComponentFixture<NotificationComponent>;
+  constructor(private notificationService: NotificationService) { }
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [NotificationComponent]
+  ngOnInit(): void {
+    this.notificationService.notifications$.subscribe(notifications => {
+      this.notifications = notifications;
     });
-    fixture = TestBed.createComponent(NotificationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  }
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  removeNotification(notification: string): void {
+    this.notificationService.removeNotification(notification);
+  }
+
+  clearNotifications(): void {
+    this.notificationService.clearNotifications();
+  }
+}

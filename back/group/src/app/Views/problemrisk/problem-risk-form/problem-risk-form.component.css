@@ -48,7 +48,14 @@
     transition: 0.3s;
     margin-bottom: 10px;
   }
-  
+  .notification {
+    padding: 10px;
+    margin: 5px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+  }
   /* Bouton Submit (Ajouter / Mettre à jour) */
   .btn.submit {
     background: #28a745; /* Vert */
