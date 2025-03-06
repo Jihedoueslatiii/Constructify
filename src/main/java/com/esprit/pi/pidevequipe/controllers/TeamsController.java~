@@ -1,0 +1,99 @@
+package com.esprit.pi.pidevequipe.controllers;
+
+import com.esprit.pi.pidevequipe.entities.Teams;
+import com.esprit.pi.pidevequipe.repositories.TeamsRepository;
+import com.esprit.pi.pidevequipe.services.ITeamsService;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/teams")
+public class TeamsController {
+    @Autowired
+    private ITeamsService teamsServices;
+    private TeamsRepository teamRepository;
+
+    @PostMapping("/create")
+    public Teams addTeam(@RequestBody Teams team) {
+        return teamsServices.addTeam(team);
+    }
+    @PostMapping("/{teamId}/addEmployee/{employeeId}")
+    public Teams addEmployeeToTeam(@PathVariable Long teamId, @PathVariable Long employeeId) {
+        return teamsServices.addEmployeeToTeam(teamId, employeeId);
+    }
+
+    @GetMapping("/all")
+    public List<Teams> getAllTeams() {
+        return teamsServices.getAllTeams();
+    }
+
+    @PatchMapping("/teams/{id}")
+    public ResponseEntity<Teams> updateTeamName(@PathVariable Long id, @RequestBody Map<String, String> updates) {
+        return teamRepository.findById(id).map(team -> {
+            if (updates.containsKey("teamName")) {
+                String newTeamName = updates.get("teamName");
+
+                // Vérifier si un autre équipe a déjà ce nom (en excluant l'équipe actuelle)
+                if (teamRepository.existsByTeamName(newTeamName) && !team.getTeamName().equals(newTeamName)) {
+                    // Si une équipe existe déjà avec ce nom, lancer une exception ou une réponse appropriée
+                    throw new RuntimeException("A team with the same name already exists.");
+                }
+
+                // Appliquer le changement de nom
+                team.setTeamName(newTeamName);
+                teamRepository.save(team);
+            }
+            return ResponseEntity.ok(team);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{teamId}/removeEmployee/{employeeId}")
+    public ResponseEntity<Map<String, String>> removeEmployeeFromTeam(@PathVariable Long teamId, @PathVariable Long employeeId) {
+        teamsServices.removeEmployeeFromTeam(teamId, employeeId);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Employee removed from team.");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/Delete/{teamId}")
+    public ResponseEntity<Map<String, String>> deleteTeam(@PathVariable Long teamId) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            teamsServices.deleteTeam(teamId);
+            response.put("message", "Team deleted successfully.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("message", "Error deleting team.");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/FindTeam/{teamId}")
+    public ResponseEntity<Teams> getTeamById(@PathVariable Long teamId) {
+        Teams team = teamsServices.getTeamById(teamId);
+        if (team != null) {
+            return ResponseEntity.ok(team);
+        } else {
+            return ResponseEntity.notFound().build(); // Retourne 404 si l'équipe n'est pas trouvée
+        }
+    }
+    @GetMapping("/paginationTeams")
+    public ResponseEntity<Page<Teams>> getTeams(@RequestParam int page, @RequestParam int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize); // Création de la pagination
+        Page<Teams> teamPage = teamRepository.findAll(pageable); // Utilisation du repository avec la pagination
+
+        return ResponseEntity.ok(teamPage); // Renvoyer directement le résultat de la page
+    }
+
+}

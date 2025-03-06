@@ -1,0 +1,22 @@
+package com.esprit.pi.pidevequipe.services;
+
+import com.esprit.pi.pidevequipe.entities.Teams;
+
+import java.util.List;
+
+public interface ITeamsService {
+
+    Teams addEmployeeToTeam(Long teamId, Long employeeId);
+
+    void removeEmployeeFromTeam(Long teamId, Long employeeId);
+
+    Teams addTeam(Teams team);
+
+    List<Teams> getAllTeams();
+
+    void deleteTeam(Long teamId);
+
+    Teams getTeamById(Long teamId);
+
+    // boolean removeUserFromTeam(Long teamId, Long userId);
+}
