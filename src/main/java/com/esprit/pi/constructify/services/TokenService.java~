@@ -1,0 +1,44 @@
+package com.esprit.pi.constructify.services;
+
+import com.esprit.pi.constructify.entities.User;
+import com.esprit.pi.constructify.repositories.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TokenService {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User getUserFromToken(String token) {
+        // Décoder le token pour récupérer l'email de l'utilisateur
+        String email = decodeToken(token);  // Appel correct de la méthode
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    // Méthode pour décoder le token et récupérer les informations de l'utilisateur
+    public String decodeToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject(); // Retourne l'email ou l'ID de l'utilisateur
+    }
+
+    // Vérifier si le token est valide
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false; // Si une exception se produit, cela signifie que le token est invalide
+        }
+    }
+}

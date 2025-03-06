@@ -1,16 +1,25 @@
 package com.esprit.pi.constructify.entities;
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import jakarta.validation.constraints.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,6 +41,52 @@ public class User {
     @Pattern(regexp = "^[0-9]{8}$", message = "Phone number must contain exactly 8 digits")
     private String phone;
 
+
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private String status = "Not Activated";
+
+    private Long teamId;
+
+    private String confirmationToken;
+
+    @Column(name = "expiry_date")
+    private LocalDateTime expiryDate;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(() -> "ROLE_" + this.role); // Préfixe "ROLE_" requis par Spring Security
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email; // L'email de l'utilisateur comme identifiant
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password; // La password de l'utilisateur
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Vous pouvez ajouter une logique spécifique si nécessaire
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Vous pouvez ajouter une logique spécifique si nécessaire
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Vous pouvez ajouter une logique spécifique si nécessaire
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return "Activated".equals(this.status); // L'utilisateur est activé ou non
+    }
 }

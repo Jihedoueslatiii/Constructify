@@ -1,0 +1,4 @@
+package com.esprit.pi.constructify.configuration;
+
+public class JwtTokenUtil {
+}

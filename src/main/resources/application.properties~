@@ -30,7 +30,7 @@ keycloak.use-resource-role-mappings=true
 
 
     spring.security.oauth2.client.registration.google.client-id=637443729013-duhmm68am6rcig4fck4jj48i85tg92nq.apps.googleusercontent.com
-spring.security.oauth2.client.registration.google.client-secret=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
+spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
 spring.security.oauth2.client.registration.google.scope=profile,email
 spring.security.oauth2.client.registration.google.redirect-uri={baseUrl}/login/oauth2/code/google
 spring.security.oauth2.client.registration.google.authorization-grant-type=authorization_code

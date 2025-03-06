@@ -56,6 +56,7 @@ public class UserServicesImpl implements IUserService {
         user.setPassword(hashedPassword); // Remplacer le mot de passe en clair par le mot de passe haché
         System.out.println("Mot de passe en clair : " + user.getPassword());
         System.out.println("Mot de passe haché : " + hashedPassword);
+        
         return userRepository.save(user); // Sauvegarder l'utilisateur dans la base de données
     }
 

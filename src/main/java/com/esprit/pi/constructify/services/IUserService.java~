@@ -11,9 +11,17 @@ public interface IUserService {
     List<User> getAllUsers();
     List<User> getUsersByRole(Role role);
     void deleteUser(Long userId);
+
+    User findByEmail(String email);
+
     boolean existsByEmail(String email);
-    String encodePassword(String password);
     Optional<User> findUserById(Long id);
     User getUserById(Long id);
-    User updateUser(Long id, User updatedUser);
+    List<User> getUsersByTeam(Long teamId);
+    String generateConfirmationToken();
+    User findByConfirmationToken(String token);
+
+    User saveUser2(User user);
+
+    void removeUserFromTeam(Long userId);
 }
