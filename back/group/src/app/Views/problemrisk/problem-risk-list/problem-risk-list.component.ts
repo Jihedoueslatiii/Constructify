@@ -30,7 +30,6 @@ export class ProblemRiskListComponent implements OnInit {
   selectedType: string = '';
   selectedStatus: string = '';
 
-  
   constructor(
     private problemRiskService: ProblemRiskService,
     private notificationService: NotificationService
@@ -48,8 +47,6 @@ export class ProblemRiskListComponent implements OnInit {
         this.notificationService.addNotification('Erreur lors du chargement des problèmes/risques.');
       }
     });
-
-   
   }
 
   // Vérifier les dates de détection
@@ -70,7 +67,6 @@ export class ProblemRiskListComponent implements OnInit {
     });
   }
 
-  
   deleteProblemRisk(id?: number): void {
     if (!id) return;
     if (confirm('Voulez-vous supprimer ce ProblemRisk ?')) {
@@ -78,11 +74,11 @@ export class ProblemRiskListComponent implements OnInit {
         next: () => {
           this.listProblemRisk = this.listProblemRisk.filter(pr => pr.idProblemRisk !== id);
           this.filterProblemRisks();
-          this.notificationService.addNotification('Problème/Risque supprimé avec succès.'); // Notification de succès
+          this.notificationService.addNotification('Problème/Risque supprimé avec succès.');
         },
         error: (err) => {
           console.error('Erreur lors de la suppression :', err);
-          this.notificationService.addNotification('Erreur lors de la suppression du problème/risque.'); // Notification d'erreur
+          this.notificationService.addNotification('Erreur lors de la suppression du problème/risque.');
         }
       });
     }
@@ -151,18 +147,20 @@ export class ProblemRiskListComponent implements OnInit {
       doc.addImage(img, 'PNG', 10, 10, 30, 30);
       doc.setFontSize(18);
       doc.setTextColor(42, 93, 137);
-      doc.text("Rapport des Problèmes / Risques", 60, 20);
+      doc.text("Report of Problèmes / Risques", 60, 20);
       doc.setDrawColor(42, 93, 137);
       doc.line(10, 35, 200, 35);
 
-      const columns = ["Titre", "Type", "Statut", "Description", "Détection", "Résolution"];
+      const columns = ["Title", "Type", "Status", "Description", "Probabilité", "Solution Appliquée", "Detection", "Resolution"];
       const rows = this.filteredProblemRisks.map(pr => [
-        pr.title,
-        pr.type,
-        pr.problemStatus,
-        pr.description,
-        pr.detectionDate ? new Date(pr.detectionDate).toLocaleDateString() : "Non disponible",
-        pr.resolutionDate ? new Date(pr.resolutionDate).toLocaleDateString() : "Non résolu"
+        pr.title || "",  // Valeur par défaut si undefined
+        pr.type || "",   // Valeur par défaut si undefined
+        pr.problemStatus || "",  // Valeur par défaut si undefined
+        pr.description || "",  // Valeur par défaut si undefined
+        pr.probability || "",  // Valeur par défaut si undefined
+        pr.appliedSolutions || "",  // Valeur par défaut si undefined
+        pr.detectionDate ? new Date(pr.detectionDate).toLocaleDateString() : "Non disponible",  // Formatté
+        pr.resolutionDate ? new Date(pr.resolutionDate).toLocaleDateString() : "Non résolu"  // Formatté
       ]);
 
       autoTable(doc, {
@@ -180,7 +178,7 @@ export class ProblemRiskListComponent implements OnInit {
       doc.text(`Exporté le : ${date}`, 150, doc.internal.pageSize.height - 10);
 
       doc.save("problems_risks.pdf");
-      this.notificationService.addNotification('Export PDF réussi.'); // Notification de succès
+      this.notificationService.addNotification('Export PDF réussi.');
     };
   }
 
@@ -188,12 +186,14 @@ export class ProblemRiskListComponent implements OnInit {
     if (!confirm("Voulez-vous exporter les problèmes/risques en Excel ?")) return;
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredProblemRisks.map(pr => ({
-      "Titre": pr.title,
+      "Title": pr.title,
       "Type": pr.type,
-      "Statut": pr.problemStatus,
+      "Status": pr.problemStatus,
       "Description": pr.description,
-      "Date de Détection": pr.detectionDate ? new Date(pr.detectionDate).toLocaleDateString() : "Non disponible",
-      "Date de Résolution": pr.resolutionDate ? new Date(pr.resolutionDate).toLocaleDateString() : "Non résolu"
+      "Probabilité": pr.probability || "",  // Valeur par défaut si undefined
+      "Solution Appliquée": pr.appliedSolutions || "",  // Valeur par défaut si undefined
+      "Date of Detection": pr.detectionDate ? new Date(pr.detectionDate).toLocaleDateString() : "Non disponible",
+      "Date of Resolution": pr.resolutionDate ? new Date(pr.resolutionDate).toLocaleDateString() : "Non résolu"
     })));
 
     const sheetName = "Problemes_Risques";

@@ -1,9 +1,9 @@
 <div class="container">
-    <h2 class="title">Ajouter un Livrable</h2>
+    <h2 class="title">Update Deliverable</h2>
 
     <form *ngIf="updateForm" [formGroup]="updateForm" (ngSubmit)="updateDeliverable()">
         <div class="form-group">
-            <label for="name">Nom du livrable :</label>
+            <label for="name">Name :</label>
             <input type="text" id="name" formControlName="name" required>
             <div *ngIf="updateForm.get('name')?.invalid && updateForm.get('name')?.touched" class="error-message">
                 Le nom doit commencer par une majuscule et contenir uniquement des lettres.
@@ -11,7 +11,7 @@
         </div>
 
         <div class="form-group">
-            <label for="expected_date">Date prévue :</label>
+            <label for="expected_date"> Expected Date:</label>
             <input type="date" id="expected_date" formControlName="expected_date">
             <div *ngIf="updateForm.get('expected_date')?.invalid && updateForm.get('expected_date')?.touched" class="error-message">
                 Veuillez sélectionner une date valide.
@@ -19,7 +19,7 @@
         </div>
 
         <div class="form-group">
-            <label for="delivery_date">Date de livraison :</label>
+            <label for="delivery_date">Delivery Date:</label>
             <input type="date" id="delivery_date" formControlName="delivery_date" required>
             <div *ngIf="updateForm.get('delivery_date')?.invalid && updateForm.get('delivery_date')?.touched" class="error-message">
                 La date de livraison doit être après la date prévue.
@@ -27,12 +27,12 @@
         </div>
 
         <div class="form-group">
-            <label for="status">Statut :</label>
+            <label for="status">Status :</label>
             <select id="status" formControlName="status">
                 <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
             </select>
         </div>
 
-        <button type="submit" class="btn submit" [disabled]="updateForm.invalid">Ajouter</button>
+        <button type="submit" class="btn submit" [disabled]="updateForm.invalid">Update</button>
     </form>
 </div>

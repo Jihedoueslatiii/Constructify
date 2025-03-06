@@ -1,7 +1,7 @@
 <app-bar (searchEvent)="onSearchChange($event)"></app-bar>
 
 <div class="container">
-    <h2 class="title">Liste des deliverables</h2>
+    <h2 class="title">List of deliverables</h2>
 
     <div class="card-container">
 
@@ -13,7 +13,7 @@
 
             <div class="buttons">
                 <button class="btn edit" [routerLink]="['/UpdateDeliverable', deliverable.idDeliverable]">Update</button>
-                <button class="btn delete" (click)="deleteDeliverable(deliverable.idDeliverable)">Supprimer</button>
+                <button class="btn delete" (click)="deleteDeliverable(deliverable.idDeliverable)">Delete</button>
             </div>
         </div>
     </div>

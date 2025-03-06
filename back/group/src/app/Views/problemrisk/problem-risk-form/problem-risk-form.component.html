@@ -1,12 +1,12 @@
 <div class="container">
   <h2 class="title">
-    {{ isEditMode ? 'Modifier un ProblemRisk' : 'Ajouter un ProblemRisk' }}
+    {{ isEditMode ? 'Modifier un ProblemRisk' : 'Add  ProblemRisk' }}
   </h2>
 
   <form [formGroup]="problemRiskForm">
     <!-- Champ Titre -->
     <div class="form-group">
-      <label for="title">Titre</label>
+      <label for="title">Title</label>
       <input
         id="title"
         formControlName="title"
@@ -56,7 +56,7 @@
 
     <!-- Champ Statut (enum) -->
     <div class="form-group">
-      <label for="problemStatus">Statut</label>
+      <label for="problemStatus">Status</label>
       <select id="problemStatus" formControlName="problemStatus">
         <option value="OPEN">OPEN</option>
         <option value="IN_PROGRESS">IN_PROGRESS</option>
@@ -66,7 +66,7 @@
 
     <!-- Date de détection -->
     <div class="form-group">
-      <label for="detectionDate">Date de détection</label>
+      <label for="detectionDate">Date of detection</label>
       <input
         id="detectionDate"
         formControlName="detectionDate"
@@ -79,7 +79,7 @@
 
     <!-- Date de résolution -->
     <div class="form-group">
-      <label for="resolutionDate">Date de résolution</label>
+      <label for="resolutionDate">Date of resolution</label>
       <input
         id="resolutionDate"
         formControlName="resolutionDate"
@@ -92,7 +92,7 @@
 
     <!-- Solutions appliquées -->
     <div class="form-group">
-      <label for="appliedSolutions">Solutions appliquées</label>
+      <label for="appliedSolutions">applied Solutions</label>
       <textarea
         id="appliedSolutions"
         formControlName="appliedSolutions"
@@ -102,7 +102,7 @@
 
     <!-- Boutons d'action -->
     <button type="button" class="btn generate" (click)="generateData()">
-      Générer 
+      Generate 
     </button>
     
     <button
@@ -111,7 +111,7 @@
       (click)="save()"
       [disabled]="problemRiskForm.invalid"
     >
-      {{ isEditMode ? 'Mettre à jour' : 'Ajouter' }}
+      {{ isEditMode ? 'Mettre à jour' : 'Add' }}
     </button>
   </form>
 </div>
