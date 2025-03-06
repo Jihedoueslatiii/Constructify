@@ -1,5 +1,6 @@
 package com.example.documentationmanagement.Controller;
 
+import com.example.documentationmanagement.Service.DocumentService;
 import com.example.documentationmanagement.Service.IDocumentService;
 import com.example.documentationmanagement.entities.Document;
 import com.example.documentationmanagement.entities.DocumentStatus;
@@ -20,39 +21,46 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Documents")
 @RestController
 @AllArgsConstructor
 @RequestMapping("documents")
 public class DocumentController {
-    IDocumentService documentService;
+    DocumentService documentService;
     private final String uploadDir = "/uploads";
 
     @PostMapping("/upload")
-    public ResponseEntity<Document> uploadDocument(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<Document> uploadDocument(@RequestParam(value = "file", required = false) MultipartFile file,
                                                    @RequestParam("title") String title,
                                                    @RequestParam("type") String type,
                                                    @RequestParam("status") String status,
-                                                   @RequestParam("folderId") Long folderId,
+                                                   @RequestParam(value = "folderId", defaultValue = "0") Long folderId, // Default to 0
                                                    @RequestParam("tags") String tags,
                                                    @RequestParam("description") String description) throws IOException {
         File uploadDirFile = new File(uploadDir);
         if (!uploadDirFile.exists()) {
             uploadDirFile.mkdirs();
         }
-        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.copy(file.getInputStream(), filePath);
+
         Document document = new Document();
         document.setTitle(title);
-        document.setStoragePath(filePath.toString());
         document.setStatus(DocumentStatus.valueOf(status));
         document.setVersionNumber(1);
         document.setType(DocumentType.valueOf(type));
-        document.setFolderId(folderId);
+        document.setFolderId(folderId); // Use the provided folderId (defaults to 0)
         document.setTags(tags);
         document.setDescription(description);
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.copy(file.getInputStream(), filePath);
+            document.setStoragePath(filePath.toString());
+        } else {
+            document.setStoragePath(null); // No file provided
+        }
 
         Document savedDocument = documentService.uploadDocument(document);
         return new ResponseEntity<>(savedDocument, HttpStatus.CREATED);
@@ -71,7 +79,11 @@ public class DocumentController {
     }
 
 
-
+    @PostMapping("/create-document")
+    public ResponseEntity<Document> createDocument(@RequestBody Document document) {
+        Document savedDocument = documentService.createDocument(document);
+        return new ResponseEntity<>(savedDocument, HttpStatus.CREATED);
+    }
 
 
     @DeleteMapping("/delete-document/{documentId}")
@@ -193,5 +205,35 @@ public class DocumentController {
             System.out.println("An error has occured : " + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+
+    @GetMapping("/search")
+    public List<Document> search(@RequestParam String query) throws Exception {
+        documentService.indexDocuments(); // Reindex on each search for simplicity (can be optimized)
+        return documentService.searchDocuments(query);
+    }
+
+
+    @GetMapping("/general-documents")
+    public ResponseEntity<List<Document>> getGeneralDocuments() {
+        List<Document> documents = documentService.getGeneralDocuments();
+        return new ResponseEntity<>(documents, HttpStatus.OK);
+    }
+
+
+
+    @PostMapping("/create-document-with-content")
+    public ResponseEntity<Document> createDocumentWithContent(@RequestBody Document document) {
+        Document savedDocument = documentService.createDocumentWithContent(document);
+        return new ResponseEntity<>(savedDocument, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update-document-content/{documentId}")
+    public ResponseEntity<Document> updateDocumentContent(@PathVariable Long documentId, @RequestBody Map<String, String> request) {
+        String newContent = request.get("content");
+        Document updatedDocument = documentService.updateDocumentContent(documentId, newContent);
+        return new ResponseEntity<>(updatedDocument, HttpStatus.OK);
     }
 }

@@ -12,4 +12,5 @@ public interface DocumentRepository extends JpaRepository<Document,Long> {
     List<Document> findByFolderIdAndIsDeletedFalse(Long folderId);
     List<Document> findTop10ByOrderByCreatedAtDesc();
     List<Document> findByFolderId(int folderId);
+    List<Document> findByFolderIdAndIsDeletedFalseOrderByCreatedAtDesc(Long folderId);
 }

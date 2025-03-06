@@ -1,7 +1,9 @@
 package com.example.documentationmanagement.Service;
 
 import com.example.documentationmanagement.entities.Document;
+import org.apache.lucene.queryparser.classic.ParseException;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IDocumentService {
@@ -16,5 +18,8 @@ public interface IDocumentService {
     public boolean checkPermissions(Long documentId, Long userId, String action);
     public List<Document> getRecentDocuments();
     public Document updateDocument(Document document);
+
+    public void indexDocuments() throws IOException;
+    public List<Document> searchDocuments(String queryStr) throws IOException, ParseException;
 
 }
