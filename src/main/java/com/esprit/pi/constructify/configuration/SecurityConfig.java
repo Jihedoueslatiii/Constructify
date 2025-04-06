@@ -65,7 +65,8 @@ public class SecurityConfig {
                                 "/user/getUserByRole/{role}",
                                 "/user/mail",
                                 "/oauth2/**",   // Autoriser les requêtes OAuth2
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/user/logs"
                         ).permitAll() // Autoriser l'accès public
                         .anyRequest().authenticated() // Toutes les autres routes nécessitent une authentification
                 )

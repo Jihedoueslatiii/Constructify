@@ -1,0 +1,4 @@
+package com.esprit.pi.constructify.entities;
+
+public class AuditLog {
+}

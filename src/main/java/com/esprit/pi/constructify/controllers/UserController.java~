@@ -1,6 +1,5 @@
 package com.esprit.pi.constructify.controllers;
 
-import com.esprit.pi.constructify.entities.GoogleUserDTO;
 import com.esprit.pi.constructify.entities.Role;
 import com.esprit.pi.constructify.entities.User;
 import com.esprit.pi.constructify.repositories.UserRepository;
@@ -292,30 +291,6 @@ public class UserController {
         return "home";
     }
 
-    @GetMapping("/mail")
-    public String userInfo(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        model.addAttribute("name", principal.getAttribute("name"));
-        model.addAttribute("email", principal.getAttribute("email"));
-        return "user";
-    }
-    @PostMapping("/signup/google")
-    public ResponseEntity<?> signUpWithGoogle(@RequestBody GoogleUserDTO googleUserDTO) {
-        if (userService.existsByEmail(googleUserDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
-        }
-
-        // Crée l'utilisateur en base de données
-        User newUser = new User();
-        newUser.setFirstname(googleUserDTO.getFirstName());
-        newUser.setLastname(googleUserDTO.getLastName());
-        newUser.setEmail(googleUserDTO.getEmail());
-        newUser.setPassword("");  // Si l'utilisateur se connecte via Google, il n'a pas de mot de passe pour l'instant
-        newUser.setRole("Client");  // ou un autre rôle que tu veux attribuer
-
-        userService.saveUser2(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-    }
 }
 
 

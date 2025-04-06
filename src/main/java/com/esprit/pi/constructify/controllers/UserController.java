@@ -1,9 +1,10 @@
 package com.esprit.pi.constructify.controllers;
 
-import com.esprit.pi.constructify.entities.GoogleUserDTO;
+import com.esprit.pi.constructify.entities.AuditLog;
 import com.esprit.pi.constructify.entities.Role;
 import com.esprit.pi.constructify.entities.User;
 import com.esprit.pi.constructify.repositories.UserRepository;
+import com.esprit.pi.constructify.services.AuditService;
 import com.esprit.pi.constructify.services.IUserService;
 import com.esprit.pi.constructify.services.JwtService;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,6 +38,8 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private AuditService auditService;
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
@@ -292,30 +296,14 @@ public class UserController {
         return "home";
     }
 
-    @GetMapping("/mail")
-    public String userInfo(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        model.addAttribute("name", principal.getAttribute("name"));
-        model.addAttribute("email", principal.getAttribute("email"));
-        return "user";
+    @GetMapping("/logs")
+    public ResponseEntity<Page<AuditLog>> getAuditLogs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<AuditLog> auditLogs = auditService.getAuditLogs(PageRequest.of(page, size));
+        return ResponseEntity.ok(auditLogs);
     }
-    @PostMapping("/signup/google")
-    public ResponseEntity<?> signUpWithGoogle(@RequestBody GoogleUserDTO googleUserDTO) {
-        if (userService.existsByEmail(googleUserDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
-        }
 
-        // Crée l'utilisateur en base de données
-        User newUser = new User();
-        newUser.setFirstname(googleUserDTO.getFirstName());
-        newUser.setLastname(googleUserDTO.getLastName());
-        newUser.setEmail(googleUserDTO.getEmail());
-        newUser.setPassword("");  // Si l'utilisateur se connecte via Google, il n'a pas de mot de passe pour l'instant
-        newUser.setRole(Role.valueOf("Client"));  // ou un autre rôle que tu veux attribuer
-
-        userService.saveUser2(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-    }
 }
 
 
