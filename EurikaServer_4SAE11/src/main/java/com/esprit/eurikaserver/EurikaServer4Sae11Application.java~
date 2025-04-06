@@ -1,0 +1,13 @@
+package com.esprit.eurikaserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class EurikaServer4Sae11Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(EurikaServer4Sae11Application.class, args);
+	}
+
+}
