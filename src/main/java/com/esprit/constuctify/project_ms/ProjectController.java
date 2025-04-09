@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projets")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:53276"})
 public class ProjectController {
 
     @Autowired
@@ -35,8 +35,13 @@ public class ProjectController {
         return new ResponseEntity<>(createdProjet, HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<Project> updateProject(@RequestBody Project projet) {
+    @PutMapping("/{idProjet}")
+    public ResponseEntity<Project> updateProject(
+            @PathVariable Long idProjet,
+            @RequestBody Project projet
+    ) {
+        // Ensure the ID from the path is used
+        projet.setIdProjet(idProjet);
         Project updatedProjet = projectService.updateProject(projet);
         return new ResponseEntity<>(updatedProjet, HttpStatus.OK);
     }
