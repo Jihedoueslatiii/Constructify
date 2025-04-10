@@ -10,4 +10,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message,Long> {
 //    List<Message> findByConversationIdAndIsDeletedFalse(Long conversationId);
 //    List<Message> findBySenderIdAndIsDeletedFalse(Long senderId);
+List<Message> findByIsPinned(Boolean isPinned);
 }

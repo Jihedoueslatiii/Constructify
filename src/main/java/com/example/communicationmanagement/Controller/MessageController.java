@@ -100,4 +100,17 @@ public class MessageController {
         Message updatedMessage = messageService.editMessage(messageId, userId, newContent);
         return ResponseEntity.ok(updatedMessage);
     }
+
+
+    @PutMapping("/{messageId}/pin")
+    public ResponseEntity<Message> pinMessage(@PathVariable Long messageId) {
+        Message pinnedMessage = messageService.pinMessage(messageId);
+        return ResponseEntity.ok(pinnedMessage);
+    }
+
+    @PutMapping("/{messageId}/unpin")
+    public ResponseEntity<Message> unpinMessage(@PathVariable Long messageId) {
+        Message unpinnedMessage = messageService.unpinMessage(messageId);
+        return ResponseEntity.ok(unpinnedMessage);
+    }
 }

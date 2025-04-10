@@ -30,18 +30,30 @@ public class MessageService  {
 
     // Create a conversation (Only Project Manager can create group chats)
     public Conversation createConversation(Long creatorId, List<Long> participants, String name, boolean isGroup, boolean isPM) {
-        if (isGroup && !isPM) {
-            throw new RuntimeException("Only project managers can create group chats.");
+        System.out.println("Creating conversation: creatorId=" + creatorId + ", participants=" + participants + ", name=" + name + ", isGroup=" + isGroup + ", isPM=" + isPM);
+        try {
+            if (isGroup && !isPM) {
+                throw new RuntimeException("Only project managers can create group chats.");
+            }
+            if(!participants.contains(creatorId)){
+                throw new RuntimeException("The creator must be included in the participant list.");
+            }
+
+            Conversation conversation = new Conversation();
+            conversation.setCreatedBy(creatorId);
+            conversation.setParticipants(participants);
+            conversation.setCreatedAt(LocalDateTime.now());
+            conversation.setType(isGroup ? ConversationType.GROUP : ConversationType.PRIVATE);
+            conversation.setName(isGroup ? name : null);
+
+            Conversation savedConversation = conversationRepository.save(conversation);
+            System.out.println("Conversation saved successfully: " + savedConversation);
+            return savedConversation;
+        } catch (Exception e) {
+            System.err.println("Error creating conversation: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error creating conversation", e);
         }
-
-        Conversation conversation = new Conversation();
-        conversation.setCreatedBy(creatorId);
-        conversation.setParticipants(participants);
-        conversation.setCreatedAt(LocalDateTime.now());
-        conversation.setType(isGroup ? ConversationType.GROUP : ConversationType.PRIVATE);
-        conversation.setName(isGroup ? name : null);
-
-        return conversationRepository.save(conversation);
     }
 
     // Send a message (Members can only message participants in the same chat)
@@ -170,6 +182,18 @@ public class MessageService  {
         return messageRepository.save(message);
     }
 
+
+    public Message pinMessage(Long messageId) {
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setIsPinned(true);
+        return messageRepository.save(message);
+    }
+
+    public Message unpinMessage(Long messageId) {
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setIsPinned(false);
+        return messageRepository.save(message);
+    }
 }
 
 
