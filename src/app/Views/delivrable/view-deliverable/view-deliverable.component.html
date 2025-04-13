@@ -1,0 +1,138 @@
+<app-bar (searchEvent)="onSearchChange($event)"></app-bar>
+
+<div class="container">
+    <!-- Bouton pour ouvrir le dashboard -->
+    <button class="dashboard-toggle-btn" (click)="toggleDashboard()">
+        <i class="fas fa-chart-pie"></i> 
+        {{ showDashboard ? 'Masquer' : 'Afficher' }} le Dashboard
+    </button>
+
+    <!-- Modal du Dashboard -->
+    <div class="dashboard-modal" [class.show]="showDashboard" (click)="showDashboard = false">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="toggleDashboard()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 class="modal-title">
+                <i class="fas fa-tachometer-alt"></i> Tableau de Bord des Livrables
+            </h2>
+            
+            <div class="dashboard-grid">
+                <!-- Carte principale - Taux de complétion -->
+                <div class="dashboard-card primary-card">
+                    <div class="card-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="metric-main">
+                        <div class="metric-value">{{ dashboardStats.completionRate || 0 }}%</div>
+                        <div class="metric-label">Taux de Complétion</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" [style.width.%]="dashboardStats.completionRate || 0"></div>
+                    </div>
+                    <div class="card-footer">
+                        <span [class]="getCompletionStatus().class">
+                            {{ getCompletionStatus().label }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Cartes secondaires -->
+                <div class="dashboard-card">
+                    <div class="metric-group">
+                        <div class="metric-item success">
+                            <div class="metric-value">{{ dashboardStats.completed || 0 }}</div>
+                            <div class="metric-label">
+                                <i class="fas fa-check-circle"></i> Terminés
+                            </div>
+                        </div>
+                        <div class="metric-item warning">
+                            <div class="metric-value">{{ dashboardStats.inProgress || 0 }}</div>
+                            <div class="metric-label">
+                                <i class="fas fa-spinner"></i> En Cours
+                            </div>
+                        </div>
+                        <div class="metric-item danger">
+                            <div class="metric-value">{{ dashboardStats.delayed || 0 }}</div>
+                            <div class="metric-label">
+                                <i class="fas fa-exclamation-triangle"></i> En Retard
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte Total -->
+                <div class="dashboard-card highlight-card">
+                    <div class="metric-total">
+                        <div class="metric-value">{{ dashboardStats.total || 0 }}</div>
+                        <div class="metric-label">Total Livrables</div>
+                    </div>
+                    <div class="distribution-chart">
+                        <div class="chart-bar completed" [style.flex-grow]="dashboardStats.completed"></div>
+                        <div class="chart-bar in-progress" [style.flex-grow]="dashboardStats.inProgress"></div>
+                        <div class="chart-bar delayed" [style.flex-grow]="dashboardStats.delayed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="title">Liste des Livrables</h2>
+
+    <div class="card-container">
+        <div class="card" *ngFor="let deliverable of paginatedDeliverables">
+            <h3>{{ deliverable.name }}</h3>
+            <p><strong>Date livraison:</strong> {{ deliverable.delivery_date | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Date attendue:</strong> {{ deliverable.expected_date | date:'dd/MM/yyyy' }}</p>
+            <p>
+                <strong>Statut:</strong> 
+                <span class="status-badge" [ngClass]="{
+                    'completed': deliverable.status === DeliverableStatus.COMPLETED,
+                    'validated': deliverable.status === DeliverableStatus.VALIDATED,
+                    'in-progress': deliverable.status === DeliverableStatus.IN_PROGRESS,
+                    'rejected': deliverable.status === DeliverableStatus.REJECTED
+                }">
+                    {{ deliverable.status }}
+                </span>
+            </p>
+
+            <div class="buttons">
+                <button class="btn edit" [routerLink]="['/UpdateDeliverable', deliverable.idDeliverable]">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button class="btn delete" (click)="deleteDeliverable(deliverable.idDeliverable)">
+                    <i class="fas fa-trash-alt"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination-controls">
+        <div class="items-per-page-selector">
+            <label for="itemsPerPage">Items par page:</label>
+            <select id="itemsPerPage" 
+                    [(ngModel)]="itemsPerPage" 
+                    (change)="onItemsPerPageChange(itemsPerPage)">
+                <option *ngFor="let option of pageSizeOptions" [value]="option">{{option}}</option>
+            </select>
+        </div>
+
+        <div class="pagination-buttons">
+            <button (click)="onPageChange(currentPage - 1)" 
+                    [disabled]="currentPage === 1">
+                Précédent
+            </button>
+            
+            <span class="page-info">
+                Page {{currentPage}} sur {{ totalPages }}
+            </span>
+            
+            <button (click)="onPageChange(currentPage + 1)" 
+                    [disabled]="currentPage * itemsPerPage >= totalItems">
+                Suivant
+            </button>
+        </div>
+    </div>
+</div>
