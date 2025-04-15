@@ -4,6 +4,7 @@ package com.example.communicationmanagement.Controller;
 import com.example.communicationmanagement.Service.IMessageService;
 
 import com.example.communicationmanagement.Service.MessageService;
+import com.example.communicationmanagement.Service.SummaryService;
 import com.example.communicationmanagement.entities.Conversation;
 import com.example.communicationmanagement.entities.Message;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("messages")
 public class MessageController {
     MessageService messageService;
+    SummaryService summaryService;
 
 
     // Create a new conversation
@@ -42,9 +44,8 @@ public class MessageController {
             @RequestParam Long senderId,
             @RequestParam Long conversationId,
             @RequestParam String content,
-            @RequestParam(required = false) String mediaUrl,
-            @RequestParam boolean isPM) {
-        Message message = messageService.sendMessage(senderId, conversationId, content, mediaUrl, isPM);
+            @RequestParam(required = false) String mediaUrl) {
+        Message message = messageService.sendMessage(senderId, conversationId, content, mediaUrl);
         return ResponseEntity.ok(message);
     }
 
@@ -53,8 +54,18 @@ public class MessageController {
     public ResponseEntity<List<Message>> getMessages(
             @RequestParam Long userId,
             @PathVariable Long conversationId) {
+
         List<Message> messages = messageService.getMessages(userId, conversationId);
+
         return ResponseEntity.ok(messages);
+    }
+
+    @GetMapping("/summarize/conversation/{conversationId}")
+    public ResponseEntity<String> Summarize(
+            @RequestParam Long userId,
+            @PathVariable Long conversationId) {
+        String summary = summaryService.summarize(userId,conversationId);
+        return ResponseEntity.ok(summary);
     }
 
     @GetMapping("/api/conversation/{conversationId}")

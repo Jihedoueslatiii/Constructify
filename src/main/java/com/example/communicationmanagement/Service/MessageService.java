@@ -57,7 +57,7 @@ public class MessageService  {
     }
 
     // Send a message (Members can only message participants in the same chat)
-    public Message sendMessage(Long senderId, Long conversationId, String content, String mediaUrl, boolean isPM) {
+    public Message sendMessage(Long senderId, Long conversationId, String content, String mediaUrl) {
         Optional<Conversation> conversationOpt = conversationRepository.findById(conversationId);
         if (conversationOpt.isEmpty()) {
             throw new RuntimeException("Conversation not found.");
@@ -91,6 +91,7 @@ public class MessageService  {
         if (!conversation.getParticipants().contains(userId)) {
             throw new RuntimeException("You are not allowed to view this conversation.");
         }
+
 
         return conversation.getMessages();
     }
@@ -194,6 +195,9 @@ public class MessageService  {
         message.setIsPinned(false);
         return messageRepository.save(message);
     }
+
+
+
 }
 
 
