@@ -18,8 +18,8 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         // Set email details
-        helper.setFrom("oueslati.jihed@esprit.tn"); // Set "From" address
-        helper.setTo("oueslati.jihed@esprit.tn"); // Set recipient email
+        helper.setFrom("oueslati.jihed@esprit.tn"); 
+        helper.setTo("oueslati.jihed@esprit.tn"); 
         helper.setSubject("New Project Added: " + project.getNomProjet());
 
         // Create the HTML email content
