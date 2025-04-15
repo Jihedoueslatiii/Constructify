@@ -39,6 +39,24 @@ public class TaskService implements ITaskService {
         Task task = retrieveTask(id);
         taskRepository.delete(task);
     }
+    @Transactional
+    public void assignTaskToProject(Long projectId, Long taskId) {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+
+        if (projectOptional.isPresent() && taskOptional.isPresent()) {
+            Project project = projectOptional.get();
+            Task task = taskOptional.get();
+
+            // Ensure the task is assigned to the correct project
+            task.setProject(project);
+            taskRepository.save(task); // Save the task with the updated project reference
+        } else {
+            throw new IllegalArgumentException("Project or task not found.");
+        }
+    }
+
+
 
 
 }
