@@ -33,7 +33,7 @@ public class GeminiService {
         String jsonInputString = "{\n" +
                 "  \"contents\": [\n" +
                 "    {\n" +
-                "      \"parts\": [\n" +
+                "      \"partss\": [\n" +
                 "        {\n" +
                 "          \"text\": \"" + inputText + "\"\n" +
                 "        }\n" +

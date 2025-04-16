@@ -18,7 +18,7 @@ public class GeminiService {
 
     public String suggestTeamName() {
         // Entrée pour la génération du nom d'équipe
-        String inputText = "Suggest some original, professional, and inspiring teams names for a team in the construction field, just give me the teams names.";
+        String inputText = "Suggest 3 original, professional, and inspiring team name for a team in the construction field, just give me the team name.";
 
         try {
             return runGeminiModel(inputText);  // Appel à la méthode qui exécute la commande
@@ -76,7 +76,7 @@ public class GeminiService {
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             JsonNode candidates = rootNode.path("candidates");
 
-            StringBuilder suggestions = new StringBuilder("Here are some team names suggestions. :\n");
+            StringBuilder suggestions = new StringBuilder("Here are some team name suggestions. :\n");
 
             // Parcourir les candidats et extraire les suggestions de noms
             if (candidates.isArray()) {
