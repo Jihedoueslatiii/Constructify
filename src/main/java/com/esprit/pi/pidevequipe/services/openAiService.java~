@@ -1,0 +1,70 @@
+package com.esprit.pi.pidevequipe.services;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
+import java.util.Map;
+
+@Service
+public class HuggingFaceService {
+
+    @Value("${huggingface.api.key}")
+    private String huggingFaceApiKey; // La clé API Hugging Face est injectée ici
+
+    private final WebClient webClient;
+
+    public HuggingFaceService(@Value("${huggingface.api.key}") String huggingFaceApiKey) {
+        if (huggingFaceApiKey == null || huggingFaceApiKey.trim().isEmpty()) {
+            throw new IllegalStateException("API key is missing! Please provide a valid Hugging Face API key.");
+        }
+        System.out.println("Hugging Face API Key: " + huggingFaceApiKey);
+
+        // Initialisation du WebClient avec l'API Hugging Face
+        this.webClient = WebClient.builder()
+                .baseUrl("https://api-inference.huggingface.co/models/gpt-3")
+                .defaultHeader("Authorization", "Bearer " + huggingFaceApiKey)
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+    }
+
+        // Méthode pour suggérer un nom d'équipe
+    public Mono<String> suggestTeamName() {
+        String prompt = "Suggère un nom original, professionnel et inspirant pour une équipe dans le domaine du bâtiment.";
+
+        // Corps de la requête à Hugging Face
+        String requestBody = "{"
+                + "\"model\": \"text-davinci-003\", " // Utilisation de GPT-3 (davinci)
+                + "\"prompt\": \"" + prompt + "\", "
+                + "\"max_tokens\": 50, "
+                + "\"temperature\": 0.7"
+                + "}";
+
+        return webClient.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .onStatus(httpStatus -> httpStatus == HttpStatus.TOO_MANY_REQUESTS,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new RuntimeException("Quota exceeded: " + errorBody))))
+                .onStatus(httpStatus -> httpStatus.is4xxClientError(),
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + errorBody))))
+                .onStatus(httpStatus -> httpStatus.is5xxServerError(),
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + errorBody))))
+                .bodyToMono(Map.class)
+                .retryWhen(Retry.fixedDelay(5, Duration.ofSeconds(3)))
+                .map(response -> {
+                    return response.get("choices").toString(); // Extraction de la suggestion du nom
+                })
+                .onErrorResume(e -> {
+                    System.err.println("Erreur: " + e.getMessage());
+                    e.printStackTrace();
+                    return Mono.just("Erreur lors de la génération du nom de l'équipe");
+                });
+    }
+}

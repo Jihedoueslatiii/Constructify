@@ -73,6 +73,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId> <!-- pour WebClient -->
+        </dependency>
+
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version> <!-- Version de Lombok -->
@@ -88,6 +98,11 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
             <version>20.0.2</version> <!-- Assure-toi d'utiliser la dernière version -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>1.3.1</version>
         </dependency>
 
 

@@ -1,0 +1,52 @@
+package com.esprit.pi.pidevequipe.services;
+
+import org.springframework.stereotype.Service;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+@Service
+public class OllamaService {
+
+    // Nom du modèle que vous utilisez, ajustez selon votre configuration
+    private final String modelName = "deepseek-r1";
+
+    public String suggestTeamName() {
+        // Entrée pour la génération du nom d'équipe
+        String inputText = "Suggère un nom original, professionnel et inspirant pour une équipe dans le domaine du bâtiment.";
+
+        try {
+            return runModel(inputText);  // Appel à la méthode qui exécute la commande
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erreur lors de la génération du nom.";
+        }
+    }
+
+    private String runModel(String inputText) throws IOException {
+        String command = "cmd.exe -Command \"ollama run " + modelName + " \"" + inputText + "\"\"";
+
+        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
+        processBuilder.redirectErrorStream(true);
+
+        Process process = processBuilder.start();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return output.toString().trim();
+    }
+
+
+}

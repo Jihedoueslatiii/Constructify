@@ -1,0 +1,102 @@
+package com.esprit.pi.pidevequipe.services;
+
+import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+@Service
+public class GeminiService {
+
+    private static final String API_KEY = "AIzaSyDNZsJ-1JeX1sPnsHKRKIGT2W4QfDewIEw";
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+
+    public String suggestTeamName() {
+        // Entrée pour la génération du nom d'équipe
+        String inputText = "Suggest some original, professional, and inspiring teams names for a team in the construction field, just give me the teams names.";
+
+        try {
+            return runGeminiModel(inputText);  // Appel à la méthode qui exécute la commande
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erreur lors de la génération du nom.";
+        }
+    }
+
+    private String runGeminiModel(String inputText) throws IOException {
+        // Construire la requête JSON
+        String jsonInputString = "{\n" +
+                "  \"contents\": [\n" +
+                "    {\n" +
+                "      \"parts\": [\n" +
+                "        {\n" +
+                "          \"text\": \"" + inputText + "\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+
+        // Créer l'URL et la connexion HTTP
+        URL url = new URL(API_URL);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+
+        // Envoyer le corps de la requête
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = jsonInputString.getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        // Lire la réponse
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+            String responseLine;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        }
+
+        // Extraire les suggestions de noms à partir de la réponse JSON
+        return extractSuggestionsFromJson(response.toString());
+    }
+
+    // Méthode pour extraire les suggestions à partir de la réponse JSON
+    private String extractSuggestionsFromJson(String jsonResponse) {
+        try {
+            // Utilisation de Jackson pour parser le JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode candidates = rootNode.path("candidates");
+
+            StringBuilder suggestions = new StringBuilder("Here are some team names suggestions. :\n");
+
+            // Parcourir les candidats et extraire les suggestions de noms
+            if (candidates.isArray()) {
+                for (JsonNode candidate : candidates) {
+                    JsonNode content = candidate.path("content");
+                    JsonNode parts = content.path("parts");
+
+                    if (parts.isArray()) {
+                        for (JsonNode part : parts) {
+                            String suggestionText = part.path("text").asText();
+                            suggestions.append("- ").append(suggestionText).append("\n");
+                        }
+                    }
+                }
+            }
+
+            return suggestions.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Erreur lors du traitement de la réponse.";
+        }
+    }
+}

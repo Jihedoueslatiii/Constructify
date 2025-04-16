@@ -1,0 +1,65 @@
+package com.esprit.pi.pidevequipe.controllers;
+
+import com.esprit.pi.pidevequipe.entities.Rating;
+import com.esprit.pi.pidevequipe.repositories.RatingRepository;
+import com.esprit.pi.pidevequipe.services.RatingServicesImpl;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@RestController
+@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/ratings")
+public class RatingController {
+    @Autowired
+    private RatingServicesImpl ratingService;
+    private RatingRepository ratingRepository;
+
+    // Add a rating for a team
+    @PostMapping("/{teamId}/ratings")
+    public ResponseEntity<Void> addRating(
+            @PathVariable Long teamId,
+            @RequestBody Map<String, Object> requestBody) {
+        Long userId = Long.valueOf(requestBody.get("userId").toString());
+        int ratingValue = Integer.parseInt(requestBody.get("ratingValue").toString());
+        ratingService.addRating(userId, teamId, ratingValue);
+        return ResponseEntity.ok().build();
+    }
+
+    // Get the average rating for a team
+    @GetMapping("/{teamId}/average")
+    public ResponseEntity<Double> getAverageRating(@PathVariable Long teamId) {
+        double average = ratingService.getAverageRating(teamId);
+        return ResponseEntity.ok(average);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Map<String, Object>>> getRatingsByUser(@PathVariable Long userId) {
+        List<Rating> ratings = ratingRepository.findByUserId(userId);
+
+        // Créer une liste pour renvoyer les résultats sous forme de map (incluant teamId)
+        List<Map<String, Object>> response = ratings.stream().map(rating -> {
+            Map<String, Object> ratingData = new HashMap<>();
+            ratingData.put("id", rating.getId());
+            ratingData.put("userId", rating.getUserId());
+            ratingData.put("ratingValue", rating.getRatingValue());
+
+            // Utiliser la méthode getTeamId() pour obtenir l'ID de l'équipe
+            Long teamId = rating.getTeamId(); // Appeler la méthode getter
+            ratingData.put("teamId", teamId);
+
+            return ratingData;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
+
+}

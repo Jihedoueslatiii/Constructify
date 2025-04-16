@@ -1,7 +1,9 @@
 package com.esprit.pi.pidevequipe.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,10 +12,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 
 @Configuration
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class CorsConfig {
 
     @Bean
@@ -36,14 +40,21 @@ public class CorsConfig {
                                 "/teams/{teamId}/removeEmployee/{employeeId}",
                                 "/teams/Delete/{teamId}",
                                 "/teams/FindTeam/{teamId}",
-                                "teams/paginationTeams"
-
+                                "teams/paginationTeams",
+                                "/api/ratings/add",
+                                "/api/ratings/average",
+                                "/api/ratings/**",
+                                "/teams/suggest-name",
+                                "/bot/chat",
+                                "/error",
+                                "/teams/{teamId}/addEmployee/{employeeId}"// Allow access to the /error page without authentication
                         ).permitAll()  // Allow access without authentication
-                        .anyRequest().authenticated()  // Require authentication for all other routes
+                        .anyRequest().hasRole("Admin")
+
                 )
                 .exceptionHandling(exceptions -> exceptions
-                .accessDeniedPage("/error") // Handle access denied errors
-        );
+                        .accessDeniedPage("/error") // Handle access denied errors
+                );
 
         return http.build();
     }
@@ -70,4 +81,5 @@ public class CorsConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }

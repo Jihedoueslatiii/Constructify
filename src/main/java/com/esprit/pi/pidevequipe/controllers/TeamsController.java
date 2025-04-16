@@ -3,6 +3,7 @@ package com.esprit.pi.pidevequipe.controllers;
 import com.esprit.pi.pidevequipe.entities.Teams;
 import com.esprit.pi.pidevequipe.repositories.TeamsRepository;
 import com.esprit.pi.pidevequipe.services.ITeamsService;
+import com.esprit.pi.pidevequipe.services.GeminiService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Mono;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,9 @@ public class TeamsController {
     @Autowired
     private ITeamsService teamsServices;
     private TeamsRepository teamRepository;
+    @Autowired
+    private GeminiService geminiService;
+
 
     @PostMapping("/create")
     public Teams addTeam(@RequestBody Teams team) {
@@ -93,6 +99,12 @@ public class TeamsController {
         Pageable pageable = PageRequest.of(page, pageSize); // Création de la pagination
         Page<Teams> teamPage = teamRepository.findAll(pageable); // Utilisation du repository avec la pagination
         return ResponseEntity.ok(teamPage); // Renvoyer directement le résultat de la page
+    }
+
+    @GetMapping("/suggest-name")
+    public String getSuggestedTeamName() {
+        // Appel du service pour générer le nom de l'équipe
+        return geminiService.suggestTeamName();
     }
 
 
