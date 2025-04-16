@@ -729,6 +729,223 @@
         min-width: 100%;
     }
 }
+/* Ajouts/modifications CSS pour le Kanban amélioré */
+.kanban-view {
+    margin-top: 20px;
+}
+
+.kanban-board {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 10px 5px 25px;
+    min-height: 70vh;
+}
+
+.kanban-column {
+    flex: 1;
+    min-width: 300px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+.kanban-column-header {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f5f9;
+    border-radius: 12px 12px 0 0;
+}
+
+.kanban-column h3 {
+    margin: 0;
+    color: #2A5D89;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.kanban-count {
+    background: #fff;
+    color: #2A5D89;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.kanban-items-container {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.kanban-item {
+    background: white;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    cursor: move;
+    transition: all 0.2s;
+    border-left: 4px solid #e2e8f0;
+}
+
+.kanban-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.kanban-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.kanban-item h4 {
+    margin: 0;
+    color: #2A5D89;
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+}
+
+.kanban-item-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    margin-left: 10px;
+}
+
+.status-todo {
+    background-color: #e2e8f0;
+    color: #64748b;
+}
+
+.status-in-progress {
+    background-color: #fff3bf;
+    color: #b45309;
+}
+
+.status-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-validated {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.kanban-item-dates {
+    margin: 10px 0;
+}
+
+.date-info {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.date-info i {
+    margin-right: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.kanban-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.kanban-item-id {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.kanban-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.kanban-actions .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    min-width: 0;
+}
+
+/* Styles de drag-and-drop améliorés */
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    opacity: 0.95;
+    transform: rotate(2deg);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.3;
+    background: #f1f5f9;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+}
+
+.cdk-drag-animating {
+    transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.kanban-column.cdk-drop-list-dragging .kanban-item:not(.cdk-drag-placeholder) {
+    transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Scrollbar personnalisée pour les colonnes */
+.kanban-items-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.kanban-items-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.kanban-items-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.kanban-items-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kanban-board {
+        flex-direction: column;
+    }
+    
+    .kanban-column {
+        min-width: 100%;
+        max-height: none;
+    }
+}
 
 @media (max-width: 600px) {
     .card-container {

@@ -2,30 +2,30 @@
 
 <div class="container">
     <div class="action-buttons">
-        <!-- Bouton Dashboard -->
         <button class="dashboard-toggle-btn" (click)="toggleDashboard()">
             <i class="fas fa-chart-pie"></i> 
             {{ showDashboard ? 'Masquer' : 'Afficher' }} le Dashboard
         </button>
         
-        <!-- Bouton Export PDF -->
-        <button class="export-btn" (click)="exportToPDF()">
-            <i class="fas fa-file-pdf"></i> Exporter PDF
+        <button class="export-btn" (click)="exportToPDF()" [disabled]="isGeneratingPdf">
+            <i class="fas fa-file-pdf"></i> 
+            {{ isGeneratingPdf ? 'Génération en cours...' : 'Exporter PDF' }}
+            <span *ngIf="isGeneratingPdf" class="spinner-border spinner-border-sm"></span>
         </button>
         
-        <!-- Bouton Prévisualisation -->
-        <button class="preview-btn" (click)="openPreview()">
-            <i class="fas fa-eye"></i> Prévisualiser
+        <button class="preview-btn" (click)="openPreview()" [disabled]="isGeneratingPreview">
+            <i class="fas fa-eye"></i> 
+            {{ isGeneratingPreview ? 'Génération en cours...' : 'Prévisualiser' }}
+            <span *ngIf="isGeneratingPreview" class="spinner-border spinner-border-sm"></span>
         </button>
         
-        <!-- Bouton Vue Kanban -->
         <button class="toggle-view-btn" (click)="toggleView()">
             <i class="fas fa-columns"></i> 
             {{ isKanbanView ? 'Vue Tableau' : 'Vue Kanban' }}
         </button>
     </div>
 
-    <!-- Modal du Dashboard -->
+    <!-- Modal Dashboard -->
     <div class="dashboard-modal" [class.show]="showDashboard" (click)="showDashboard = false">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <button class="close-btn" (click)="toggleDashboard()">
@@ -37,7 +37,6 @@
             </h2>
             
             <div class="dashboard-grid">
-                <!-- Carte principale - Taux de complétion -->
                 <div class="dashboard-card primary-card">
                     <div class="card-icon">
                         <i class="fas fa-project-diagram"></i>
@@ -56,7 +55,6 @@
                     </div>
                 </div>
 
-                <!-- Cartes secondaires -->
                 <div class="dashboard-card">
                     <div class="metric-group">
                         <div class="metric-item success">
@@ -80,7 +78,6 @@
                     </div>
                 </div>
 
-                <!-- Carte Total -->
                 <div class="dashboard-card highlight-card">
                     <div class="metric-total">
                         <div class="metric-value">{{ dashboardStats.total || 0 }}</div>
@@ -98,7 +95,7 @@
 
     <h2 class="title">Liste des Livrables</h2>
 
-    <!-- Vue Tableau (par défaut) -->
+    <!-- Vue Tableau -->
     <div *ngIf="!isKanbanView">
         <div class="card-container">
             <div class="card" *ngFor="let deliverable of paginatedDeliverables">
@@ -128,7 +125,7 @@
             </div>
         </div>
 
-        <!-- Pagination controls -->
+        <!-- Pagination -->
         <div class="pagination-controls">
             <div class="items-per-page-selector">
                 <label for="itemsPerPage">Items par page:</label>
@@ -140,45 +137,166 @@
             </div>
 
             <div class="pagination-buttons">
-                <button (click)="onPageChange(currentPage - 1)" 
-                        [disabled]="currentPage === 1">
+                <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
                     Précédent
                 </button>
-                
-                <span class="page-info">
-                    Page {{currentPage}} sur {{ totalPages }}
-                </span>
-                
-                <button (click)="onPageChange(currentPage + 1)" 
-                        [disabled]="currentPage * itemsPerPage >= totalItems">
+                <span class="page-info">Page {{currentPage}} sur {{ totalPages }}</span>
+                <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * itemsPerPage >= totalItems">
                     Suivant
                 </button>
             </div>
         </div>
     </div>
 
-   
+    <!-- Vue Kanban améliorée -->
+    <div *ngIf="isKanbanView" class="kanban-view">
+        <div class="kanban-board" cdkDropListGroup>
+            <div class="kanban-column" 
+                 cdkDropList 
+                 id="inProgressList"
+                 [cdkDropListData]="inProgressDeliverables"
+                 (cdkDropListDropped)="drop($event)">
+                <div class="kanban-column-header">
+                    <h3>En cours</h3>
+                    <span class="kanban-count">{{ inProgressDeliverables.length }}</span>
+                </div>
+                <div class="kanban-items-container">
+                    <div class="kanban-item" 
+                         *ngFor="let item of inProgressDeliverables" 
+                         cdkDrag>
+                        <div class="kanban-item-header">
+                            <h4>{{item.name}}</h4>
+                            <span class="kanban-item-status status-in-progress">
+                                {{ item.status }}
+                            </span>
+                        </div>
+                        <div class="kanban-item-dates">
+                            <div class="date-info">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Attendue: {{item.expected_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                            <div *ngIf="item.delivery_date" class="date-info">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Livrée: {{item.delivery_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                        </div>
+                        <div class="kanban-item-footer">
+                            <div class="kanban-item-id">
+                                #{{item.idDeliverable}}
+                            </div>
+                            <div class="kanban-actions">
+                                <button class="btn edit" [routerLink]="['/UpdateDeliverable', item.idDeliverable]">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn delete" (click)="deleteDeliverable(item.idDeliverable)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-           
+            <div class="kanban-column" 
+                 cdkDropList 
+                 id="completedList"
+                 [cdkDropListData]="completedDeliverables"
+                 (cdkDropListDropped)="drop($event)">
+                <div class="kanban-column-header">
+                    <h3>Terminé</h3>
+                    <span class="kanban-count">{{ completedDeliverables.length }}</span>
+                </div>
+                <div class="kanban-items-container">
+                    <div class="kanban-item" 
+                         *ngFor="let item of completedDeliverables" 
+                         cdkDrag>
+                        <div class="kanban-item-header">
+                            <h4>{{item.name}}</h4>
+                            <span class="kanban-item-status status-completed">
+                                {{ item.status }}
+                            </span>
+                        </div>
+                        <div class="kanban-item-dates">
+                            <div class="date-info">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Attendue: {{item.expected_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                            <div class="date-info">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Livrée: {{item.delivery_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                        </div>
+                        <div class="kanban-item-footer">
+                            <div class="kanban-item-id">
+                                #{{item.idDeliverable}}
+                            </div>
+                            <div class="kanban-actions">
+                                <button class="btn edit" [routerLink]="['/UpdateDeliverable', item.idDeliverable]">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn delete" (click)="deleteDeliverable(item.idDeliverable)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-           
-            <button class="preview-btn" (click)="openPreview()" [disabled]="isGeneratingPreview">
-                <i class="fas fa-eye"></i> 
-                {{ isGeneratingPreview ? 'Génération en cours...' : 'Prévisualiser' }}
-                <span *ngIf="isGeneratingPreview" class="spinner-border spinner-border-sm"></span>
-            </button>
-            <button class="export-btn" (click)="exportToPDF()" [disabled]="isGeneratingPdf">
-                <i class="fas fa-file-pdf"></i> 
-                {{ isGeneratingPdf ? 'Génération en cours...' : 'Exporter PDF' }}
-                <span *ngIf="isGeneratingPdf" class="spinner-border spinner-border-sm"></span>
-            </button>
+            <div class="kanban-column" 
+                 cdkDropList 
+                 id="validatedList"
+                 [cdkDropListData]="validatedDeliverables"
+                 (cdkDropListDropped)="drop($event)">
+                <div class="kanban-column-header">
+                    <h3>Validé</h3>
+                    <span class="kanban-count">{{ validatedDeliverables.length }}</span>
+                </div>
+                <div class="kanban-items-container">
+                    <div class="kanban-item" 
+                         *ngFor="let item of validatedDeliverables" 
+                         cdkDrag>
+                        <div class="kanban-item-header">
+                            <h4>{{item.name}}</h4>
+                            <span class="kanban-item-status status-validated">
+                                {{ item.status }}
+                            </span>
+                        </div>
+                        <div class="kanban-item-dates">
+                            <div class="date-info">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Attendue: {{item.expected_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                            <div class="date-info">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Livrée: {{item.delivery_date | date:'dd/MM/yyyy'}}</span>
+                            </div>
+                        </div>
+                        <div class="kanban-item-footer">
+                            <div class="kanban-item-id">
+                                #{{item.idDeliverable}}
+                            </div>
+                            <div class="kanban-actions">
+                                <button class="btn edit" [routerLink]="['/UpdateDeliverable', item.idDeliverable]">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn delete" (click)="deleteDeliverable(item.idDeliverable)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Contenu caché pour le PDF -->
 <div id="pdfContent" style="display: none;">
     <div class="pdf-header">
-       
-       
+        <h1>Liste des Livrables</h1>
+        <p>Généré le {{ currentDate | date:'dd/MM/yyyy' }}</p>
     </div>
     
     <table class="pdf-table">

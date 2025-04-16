@@ -24,7 +24,6 @@ export class ViewDeliverableComponent implements OnInit {
   isGeneratingPdf: boolean = false;
 
   // Colonnes Kanban
-  todoDeliverables: any[] = [];
   inProgressDeliverables: any[] = [];
   completedDeliverables: any[] = [];
   validatedDeliverables: any[] = [];
@@ -72,7 +71,6 @@ export class ViewDeliverableComponent implements OnInit {
   }
 
   organizeKanbanColumns(): void {
-    this.todoDeliverables = this.listDeliverable.filter(d => !d.status || d.status === '');
     this.inProgressDeliverables = this.listDeliverable.filter(d => d.status === DeliverableStatus.IN_PROGRESS);
     this.completedDeliverables = this.listDeliverable.filter(d => d.status === DeliverableStatus.COMPLETED);
     this.validatedDeliverables = this.listDeliverable.filter(d => d.status === DeliverableStatus.VALIDATED);
@@ -90,10 +88,9 @@ export class ViewDeliverableComponent implements OnInit {
       );
       
       const movedItem = event.container.data[event.currentIndex];
-      let newStatus: DeliverableStatus | string;
+      let newStatus: DeliverableStatus;
       
       switch (event.container.id) {
-        case 'todoList': newStatus = ''; break;
         case 'inProgressList': newStatus = DeliverableStatus.IN_PROGRESS; break;
         case 'completedList': newStatus = DeliverableStatus.COMPLETED; break;
         case 'validatedList': newStatus = DeliverableStatus.VALIDATED; break;
@@ -196,6 +193,28 @@ export class ViewDeliverableComponent implements OnInit {
     this.filterDeliverables();
   }
 
+  private getBase64ImageFromURL(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'anonymous');
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.height = img.height;
+        canvas.width = img.width;
+        ctx?.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      
+      img.onerror = error => {
+        reject(error);
+      };
+      
+      img.src = url;
+    });
+  }
+
   async exportToPDF(): Promise<void> {
     this.isGeneratingPdf = true;
     const element = document.getElementById('pdfContent');
@@ -215,7 +234,6 @@ export class ViewDeliverableComponent implements OnInit {
       clone.style.width = '800px';
       document.body.appendChild(clone);
 
-      // Attendre que le DOM soit mis à jour
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(clone, {
@@ -232,52 +250,35 @@ export class ViewDeliverableComponent implements OnInit {
       document.body.removeChild(clone);
 
       const imgData = canvas.toDataURL('image/png');
-      
-      if (!imgData || imgData === 'data:,') {
-        throw new Error('La capture du contenu a échoué');
-      }
-
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      // Ajouter le logo
+      try {
+        const logoData = await this.getBase64ImageFromURL('assets/logo.png');
+        pdf.addImage(logoData, 'PNG', 15, 10, 30, 30);
+      } catch (e) {
+        console.warn('Logo non chargé, continuation sans logo');
+      }
 
       // En-tête
       pdf.setFontSize(18);
       pdf.setTextColor(42, 93, 137);
-      pdf.text('Liste des Livrables', 105, 15, { align: 'center' });
+      pdf.text('Liste des Livrables', 105, 25, { align: 'center' });
       pdf.setFontSize(12);
       pdf.setTextColor(100, 100, 100);
-      pdf.text(`Généré le ${this.currentDate.toLocaleDateString()}`, 105, 22, { align: 'center' });
+      pdf.text(`Généré le ${this.currentDate.toLocaleDateString()}`, 105, 32, { align: 'center' });
 
-      // Contenu
-      pdf.addImage({
-        imageData: imgData,
-        format: 'PNG',
-        x: 10,
-        y: 30,
-        width: pdfWidth,
-        height: pdfHeight
-      });
-
-      // Pied de page
-      const pageCount = pdf.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(150, 150, 150);
-        pdf.text(
-          `Page ${i} sur ${pageCount}`,
-          pdf.internal.pageSize.getWidth() / 2,
-          pdf.internal.pageSize.getHeight() - 10,
-          { align: 'center' }
-        );
-      }
+      // Contenu principal
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+      pdf.addImage(imgData, 'PNG', 10, 40, pdfWidth, pdfHeight);
 
       pdf.save(`livrables_${this.currentDate.toISOString().slice(0, 10)}.pdf`);
     } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error);
-      alert('Une erreur est survenue lors de la génération du PDF');
+      console.error('Erreur export PDF:', error);
+      alert('Erreur lors de la génération du PDF');
     } finally {
       this.isGeneratingPdf = false;
     }
@@ -294,7 +295,6 @@ export class ViewDeliverableComponent implements OnInit {
     }
 
     try {
-      // Afficher temporairement le contenu pour la capture
       const originalDisplay = element.style.display;
       element.style.display = 'block';
       
@@ -309,7 +309,7 @@ export class ViewDeliverableComponent implements OnInit {
         windowHeight: element.scrollHeight
       });
 
-      element.style.display = originalDisplay; // Restaurer l'état original
+      element.style.display = originalDisplay;
 
       const previewWindow = window.open('', '_blank');
       if (!previewWindow) {

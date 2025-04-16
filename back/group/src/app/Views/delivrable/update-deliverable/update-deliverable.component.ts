@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeliverableService } from '../../service/deliverable.service';
 import { Deliverable, DeliverableStatus } from '../../model/deliverable.module';
-import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-update-deliverable',
@@ -15,19 +14,14 @@ export class UpdateDeliverableComponent implements OnInit {
   idDeliverable!: number;
   statusOptions = Object.values(DeliverableStatus);
   
+  deliverable: Deliverable = {} as Deliverable; // Initialisation correcte
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private ds: DeliverableService
-  ) {
-    this.updateForm = this.fb.group({
-      name: [''],
-      expected_date: [''],
-      delivery_date: [''],
-      status: ['']
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.idDeliverable = Number(this.route.snapshot.paramMap.get('id'));
@@ -35,19 +29,15 @@ export class UpdateDeliverableComponent implements OnInit {
     if (this.idDeliverable) {
       this.ds.getDeliverableById(this.idDeliverable).subscribe({
         next: (data) => {
-          // Formatage des dates pour les inputs
-          const formatDateForInput = (date: Date) => {
-            return date ? formatDate(date, 'yyyy-MM-dd', 'en-US') : null;
-          };
-
-          this.updateForm.patchValue({
-            name: data.name,
-            expected_date: formatDateForInput(data.expected_date),
-            delivery_date: formatDateForInput(data.delivery_date),
-            status: data.status
+          this.deliverable = data;
+          this.updateForm = this.fb.group({
+            name: [this.deliverable.name],
+            expected_date: [this.deliverable.expected_date],
+            delivery_date: [this.deliverable.delivery_date],
+            status: [this.deliverable.status]
           });
         },
-        error: (err) => console.error('Erreur lors de la récupération:', err)
+        error: (err) => console.error('Erreur lors de la récupération du livrable:', err)
       });
     }
   }
@@ -56,9 +46,10 @@ export class UpdateDeliverableComponent implements OnInit {
     if (this.updateForm.valid) {
       this.ds.updateDeliverable(this.idDeliverable, this.updateForm.value).subscribe({
         next: () => {
+          console.log('deliverable mise à jour avec succès');
           this.router.navigate(['/ViewDeliverable']);
         },
-        error: (err) => console.error('Erreur lors de la mise à jour:', err)
+        error: (err) => console.error('Erreur lors de la mise à jour du livrable:', err)
       });
     }
   }
