@@ -44,7 +44,7 @@ public class TeamsController {
         return teamsServices.getAllTeams();
     }
 
-    @PatchMapping("/teams/{id}")
+    @PatchMapping("/team/{id}")
     public ResponseEntity<Teams> updateTeamName(@PathVariable Long id, @RequestBody Map<String, String> updates) {
         return teamRepository.findById(id).map(team -> {
             if (updates.containsKey("teamName")) {
