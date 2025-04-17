@@ -11,6 +11,8 @@ import com.example.communicationmanagement.entities.MessageStatus;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,12 +20,25 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class MessageService  {
 
 
+    private final JavaMailSender mailSender;
+
+
+    public void sendNotificationEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
     private ConversationRepository conversationRepository;
 
     private MessageRepository messageRepository;
@@ -196,6 +211,55 @@ public class MessageService  {
         return messageRepository.save(message);
     }
 
+
+    // In MessageService
+    public void markAsDelivered(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setStatus(MessageStatus.DELIVERED);
+        messageRepository.save(message);
+    }
+
+    public void markAsRead(Long messageId, Long userId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+
+        // Verify user is participant
+        if (!message.getConversation().getParticipants().contains(userId)) {
+            throw new RuntimeException("Not authorized");
+        }
+
+        message.setStatus(MessageStatus.READ);
+        messageRepository.save(message);
+    }
+
+
+
+    public void deleteConversation(Long conversationId, Long userId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+
+        if (!conversation.getCreatedBy().equals(userId)) {
+            throw new RuntimeException("Only the creator can delete the conversation.");
+        }
+
+        conversationRepository.delete(conversation);
+    }
+
+
+
+
+    public Conversation renameConversation(Long conversationId, Long userId, String newName) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found."));
+
+        if (!conversation.getParticipants().contains(userId)) {
+            throw new RuntimeException("You are not authorized to rename this conversation.");
+        }
+
+        conversation.setName(newName);
+        return conversationRepository.save(conversation);
+    }
 
 
 }

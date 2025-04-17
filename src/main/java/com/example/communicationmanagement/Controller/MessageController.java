@@ -46,6 +46,7 @@ public class MessageController {
             @RequestParam String content,
             @RequestParam(required = false) String mediaUrl) {
         Message message = messageService.sendMessage(senderId, conversationId, content, mediaUrl);
+
         return ResponseEntity.ok(message);
     }
 
@@ -124,4 +125,48 @@ public class MessageController {
         Message unpinnedMessage = messageService.unpinMessage(messageId);
         return ResponseEntity.ok(unpinnedMessage);
     }
+
+
+    // In MessageController
+    @PutMapping("/{messageId}/delivered")
+    public ResponseEntity<?> markDelivered(@PathVariable Long messageId) {
+        messageService.markAsDelivered(messageId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{messageId}/read")
+    public ResponseEntity<?> markRead(
+            @PathVariable Long messageId,
+            @RequestParam Long userId) {
+
+        messageService.markAsRead(messageId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+    @DeleteMapping("/conversation/{conversationId}")
+    public ResponseEntity<?> deleteConversation(@PathVariable Long conversationId, @RequestParam Long userId) {
+        try {
+            messageService.deleteConversation(conversationId, userId);
+            return ResponseEntity.ok("Conversation deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+
+
+    @PutMapping("/conversation/{conversationId}/rename")
+    public ResponseEntity<Conversation> renameConversation(@PathVariable Long conversationId,
+                                                           @RequestParam Long userId,
+                                                           @RequestParam String newName) {
+        Conversation updated = messageService.renameConversation(conversationId, userId, newName);
+        return ResponseEntity.ok(updated);
+    }
+
+
 }
+

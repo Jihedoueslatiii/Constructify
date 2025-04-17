@@ -4,6 +4,7 @@ import com.example.communicationmanagement.Service.MessageService;
 import com.example.communicationmanagement.entities.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -14,20 +15,19 @@ public class WebSocketMessageController {
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.send") // client sends here
+    @MessageMapping("/chat.send")
+    @SendTo("/topic/conversations/{conversationId}")
     public void send(Message message) {
-        // save message
-        Message saved = messageService.sendMessage(
+        // Log the conversationId to make sure it matches the frontend's subscription
+        System.out.println("Sending message to conversationId: " + message.getConversation().getConversationId());
+
+        // First save the message to database
+        Message savedMessage = messageService.sendMessage(
                 message.getSenderId(),
                 message.getConversation().getConversationId(),
                 message.getContent(),
                 message.getMediaUrl()
         );
 
-        // broadcast to subscribers of this conversation
-        messagingTemplate.convertAndSend(
-                "/topic/conversations/" + message.getConversation().getConversationId(),
-                saved
-        );
     }
 }
