@@ -1,0 +1,34 @@
+package com.example.reports.Service;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+@Service
+public class TemporalExpressionParser {
+
+    public String convertToCron(String frequency, String time) {
+        // Convert natural language to cron expression
+        // Example: "every Friday at 3pm" → "0 0 15 ? * FRI"
+
+        // You might want to use a library like:
+        // - Natty (http://natty.joestelmach.com/)
+        // - Chronic (Java port)
+        // Or implement your own parser
+
+        return generateCron(frequency, time);
+    }
+
+    public LocalDateTime getFirstRunDate(String command) {
+        // Calculate when the first run should occur
+        return calculateFirstRun(command);
+    }
+
+    private String generateCron(String frequency, String time) {
+        // Implementation details
+    }
+
+    private LocalDateTime calculateFirstRun(String command) {
+        // Implementation details
+    }
+}

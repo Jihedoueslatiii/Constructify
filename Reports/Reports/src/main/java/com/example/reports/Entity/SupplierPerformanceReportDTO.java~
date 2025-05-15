@@ -1,0 +1,4 @@
+package com.example.reports.Entity;
+
+public class SupplierPerformanceReportDTO {
+}

@@ -1,0 +1,121 @@
+package com.example.reports.Service;
+
+import com.example.reports.Entity.Report;
+import com.example.reports.Entity.ScheduleConfig;
+import com.example.reports.Entity.ScheduleLog;
+import com.example.reports.Repository.ScheduleConfigRepository;
+import com.example.reports.Repository.ScheduleLogRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class ReportSchedulingService {
+
+    @Autowired
+    private ScheduleConfigRepository scheduleConfigRepo;
+
+    @Autowired
+    private ScheduleLogRepository scheduleLogRepo;
+
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private NaturalLanguageParser naturalLanguageParser;
+
+    // Fixed issue #1: Implement parseScheduleCommand in NaturalLanguageParser
+    public ScheduleConfig createSchedule(String naturalLanguageCommand, Long reportId) {
+        Report report = reportService.getReportById(reportId);
+        if (report == null) {
+            throw new RuntimeException("Report not found with id: " + reportId);
+        }
+
+        // Ensure the parser is properly implemented
+        ScheduleConfig config = naturalLanguageParser.parseScheduleCommand(naturalLanguageCommand, report);
+        return scheduleConfigRepo.save(config);
+    }
+
+    @Scheduled(cron = "0 * * * * ?") // Run every minute
+    public void executeScheduledReports() {
+        List<ScheduleConfig> activeSchedules = scheduleConfigRepo.findByActiveTrue();
+
+        for (ScheduleConfig config : activeSchedules) {
+            if (shouldRunNow(config)) {
+                try {
+                    executeReport(config);
+                    logSuccess(config);
+                } catch (Exception e) {
+                    logFailure(config, e.getMessage());
+                }
+            }
+        }
+    }
+
+    // Fixed issue #2: Changed to match ReportService method name
+    private void executeReport(ScheduleConfig config) {
+        Report report = config.getReport();
+
+        // Generate and get the report data
+        byte[] reportData = reportService.generateReportData(report);
+
+        // Send email with the generated report
+        emailService.sendEmail(
+                config.getRecipients(),
+                "Scheduled Report: " + report.getTitle(),
+                "Please find attached the scheduled report.",
+                reportData,
+                report.getTitle() + ".pdf"
+        );
+    }
+
+    private void logSuccess(ScheduleConfig config) {
+        ScheduleLog log = new ScheduleLog();
+        log.setScheduleConfig(config);
+        log.setRunTime(LocalDateTime.now());
+        log.setSuccess(true);
+        scheduleLogRepo.save(log);
+    }
+
+    private void logFailure(ScheduleConfig config, String error) {
+        ScheduleLog log = new ScheduleLog();
+        log.setScheduleConfig(config);
+        log.setRunTime(LocalDateTime.now());
+        log.setSuccess(false);
+        log.setErrorMessage(error);
+        scheduleLogRepo.save(log);
+    }
+
+    private boolean shouldRunNow(ScheduleConfig config) {
+        if (!config.isActive()) return false;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextRun = config.getNextRunTime();
+
+        // Check if we're within the same minute of the scheduled time
+        return nextRun != null &&
+                now.getYear() == nextRun.getYear() &&
+                now.getMonth() == nextRun.getMonth() &&
+                now.getDayOfMonth() == nextRun.getDayOfMonth() &&
+                now.getHour() == nextRun.getHour() &&
+                now.getMinute() == nextRun.getMinute();
+    }
+
+    public ScheduleConfig getScheduleById(Long id) {
+        return scheduleConfigRepo.findById(id).orElse(null);
+    }
+
+    public List<ScheduleConfig> getSchedulesByReportId(Long reportId) {
+        return scheduleConfigRepo.findByReport_IdReport(reportId);
+    }
+
+    public void cancelSchedule(Long id) {
+        scheduleConfigRepo.deleteById(id);
+    }
+}

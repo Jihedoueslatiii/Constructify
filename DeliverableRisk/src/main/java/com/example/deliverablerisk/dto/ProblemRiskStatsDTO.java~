@@ -1,0 +1,27 @@
+package com.example.deliverablerisk.dto;
+
+public class ProblemRiskStatsDTO {
+    private String label;
+    private Long count;
+
+    public ProblemRiskStatsDTO(Enum<?> label, Long count) {
+        this.label = label.name(); // Convertir l'ENUM en String
+        this.count = count;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+}

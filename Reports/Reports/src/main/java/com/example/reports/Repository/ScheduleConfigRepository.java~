@@ -1,0 +1,11 @@
+package com.example.reports.Repository;
+
+import com.example.reports.Entity.ScheduleConfig;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ScheduleConfigRepository extends JpaRepository<ScheduleConfig, Long> {
+    // Change from findByReportId to findByReport_IdReport
+    List<ScheduleConfig> findByReport_IdReport(Long reportId);
+}

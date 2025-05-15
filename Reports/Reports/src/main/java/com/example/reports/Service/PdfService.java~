@@ -1,0 +1,84 @@
+package com.example.reports.Service;
+
+import com.example.reports.Entity.Report;
+import com.example.reports.Entity.ReportType;
+import com.example.reports.Entity.Supplier;
+import com.example.reports.Repository.SupplierRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class PdfService {
+    @Autowired
+    private SupplierRepo supplierRepo;
+
+    @Autowired
+    private ReportService reportService;
+
+    public byte[] generatePdf() {
+        List<Supplier> suppliers = supplierRepo.findAllByRatingGreaterThan("4");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            // Create PDF document
+            PdfWriter writer = new PdfWriter(outputStream);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // Add title
+            document.add(new Paragraph("Supplier Report").setBold().setFontSize(16));
+            document.add(new Paragraph("Generated on: " + LocalDateTime.now()));
+            document.add(new Paragraph("\n")); // Add some space
+
+            // Create table
+            float[] columnWidths = {1, 3, 3, 3};
+            Table table = new Table(columnWidths);
+
+            // Add table headers
+            table.addHeaderCell("ID");
+            table.addHeaderCell("Name");
+            table.addHeaderCell("Email");
+            table.addHeaderCell("Rating");
+
+            // Add supplier data
+            for (Supplier supplier : suppliers) {
+                table.addCell(String.valueOf(supplier.getIdSupplier()));
+                table.addCell(supplier.getName());
+                table.addCell(supplier.getEmail());
+                table.addCell(supplier.getRating());
+            }
+
+            document.add(table);
+            document.close();
+
+            // Create and save a report entity
+            Report report = new Report();
+            report.setTitle("Supplier Report");
+            report.setDescription("Report of suppliers with rating > 4");
+            report.setGeneratedDate(LocalDateTime.now());
+            report.setLastUpdated(LocalDateTime.now());
+
+            report.setReportType(ReportType.SUPPLIER_PERFORMANCE); // Set appropriate type
+            report.setStatus(ReportStatus.GENERATED); // Or whatever default you want
+            report.setTags(List.of("top-suppliers", "auto-generated", "rating>4"));
+            report.setJsonData(new ObjectMapper().writeValueAsString(suppliers)); // optional
+            // Generate and save the report data
+            byte[] pdfData = outputStream.toByteArray();
+            reportService.generateReportData(report);
+
+            return pdfData;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate PDF report", e);
+        }
+    }
+}

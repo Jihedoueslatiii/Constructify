@@ -1,0 +1,42 @@
+package com.example.deliverablerisk.Controller;
+
+import com.example.deliverablerisk.Entities.Deliverable;
+import com.example.deliverablerisk.Services.IDeliverableService; // ✅ Correct
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/deliverables")
+public class DeliverableController {
+
+@Autowired
+    private IDeliverableService deliverableService;
+
+
+    @PostMapping("/add")
+    public Deliverable addDeliverable(@RequestBody Deliverable deliverable) {
+        System.out.println("Reçu : " + deliverable);
+        return deliverableService.addDeliverable(deliverable);
+    }
+
+    @GetMapping
+    public List<Deliverable> getAllDeliverables() {
+        return deliverableService.getAllDeliverable();
+    }
+    @GetMapping("/{id}")
+    public Deliverable getDeliverableById(@PathVariable Long id) {
+        return deliverableService.getDeliverableById(id);
+    }
+
+    @PutMapping("/update/{id}")
+    public Deliverable x(@PathVariable Long id, @RequestBody Deliverable updatedDeliverable) {
+        return deliverableService.updateDeliverable(id, updatedDeliverable);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteDeliverable(@PathVariable Long id) {
+        deliverableService.deleteDeliverable(id);
+    }
+}

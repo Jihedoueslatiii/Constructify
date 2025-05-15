@@ -1,0 +1,21 @@
+package com.example.deliverablerisk.Repository;
+
+import com.example.deliverablerisk.Entities.ProblemRisk;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ProblemRiskRepository extends JpaRepository<ProblemRisk, Long> {
+
+    // Comptage par type
+    @Query("SELECT p.type, COUNT(p) FROM ProblemRisk p GROUP BY p.type")
+    List<Object[]> countByType();
+
+    // Comptage par statut
+    @Query("SELECT p.problemStatus, COUNT(p) FROM ProblemRisk p GROUP BY p.problemStatus")
+    List<Object[]> countByStatus();
+
+}

@@ -1,0 +1,54 @@
+package com.example.deliverablerisk.Services;
+
+import com.example.deliverablerisk.Repository.DeliverableRepository;
+
+import com.example.deliverablerisk.Entities.Deliverable;
+import com.example.deliverablerisk.Repository.DeliverableRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+@Service
+public class DeliverableServiceImplement implements IDeliverableService {
+    @Autowired
+   DeliverableRepository deliverableRepository ;
+
+    @Override
+    public Deliverable addDeliverable(Deliverable deliverable) {
+        return deliverableRepository.save(deliverable);
+    }
+    @Override
+    public List<Deliverable> getAllDeliverable() {
+        return (List<Deliverable>) deliverableRepository.findAll();
+    }
+    @Override
+    public Deliverable getDeliverableById(Long id) {
+        return deliverableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livrable introuvable avec l'ID : " + id));
+    }
+
+    @Override
+    public Deliverable updateDeliverable(Long idDeliverable, Deliverable updatedDeliverable) {
+        Deliverable existingBloc = deliverableRepository.findById(idDeliverable).orElse(null);
+
+        if (existingBloc == null) {
+            System.out.println("Deliverable non trouvé avec id: " + idDeliverable);
+            return null;
+        }
+
+        existingBloc.setName(updatedDeliverable.getName());
+        existingBloc.setStatus(updatedDeliverable.getStatus());
+        existingBloc.setExpected_date(updatedDeliverable.getExpected_date());
+        existingBloc.setDelivery_date(updatedDeliverable.getDelivery_date());
+
+
+
+        return deliverableRepository.save(existingBloc);
+    }
+    @Override
+    public void deleteDeliverable(Long idDeliverable) {
+        deliverableRepository.deleteById(idDeliverable);
+    }
+
+
+}
